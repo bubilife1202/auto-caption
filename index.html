@@ -387,6 +387,13 @@
 
     <script>
         // ========================================
+        // WAIT FOR DOM TO BE FULLY LOADED
+        // ========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 릴스 대본 자판기 시작!');
+
+        // ========================================
         // TEMPLATE DATABASE (Smart Slot Machine)
         // ========================================
 
@@ -1049,10 +1056,12 @@
                 btn.classList.remove('custom-input');
                 btn.classList.add('bg-purple-600');
                 currentCategory = btn.dataset.category;
+                console.log(`📌 카테고리 선택: ${currentCategory}`);
             });
         });
 
         // Set default category
+        console.log('🏷️ 기본 카테고리 설정 중...');
         categoryBtns[0].click();
 
         // ========================================
@@ -1061,6 +1070,7 @@
 
         scriptForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log('📝 폼 제출됨 - 새로고침 방지 성공!');
 
             // Get form data
             currentFormData = {
@@ -1070,14 +1080,26 @@
                 solution: document.getElementById('solution').value
             };
 
+            console.log('📋 입력 데이터:', currentFormData);
+
+            // Validate form data
+            if (!currentFormData.product || !currentFormData.target ||
+                !currentFormData.pain || !currentFormData.solution) {
+                alert('모든 필드를 입력해주세요!');
+                return;
+            }
+
             // Show loading modal
+            console.log('⏳ 로딩 모달 표시 시작...');
             showLoadingAnimation();
 
             // Wait 2.5 seconds
             await new Promise(resolve => setTimeout(resolve, 2500));
 
             // Generate scripts for all tabs
+            console.log('🎯 대본 생성 중...');
             generateAllScripts();
+            console.log('✨ 대본 생성 완료!');
 
             // Hide loading and show results
             loadingModal.classList.add('hidden');
@@ -1086,7 +1108,9 @@
             resultsSection.classList.remove('hidden');
 
             // Display current tab
+            console.log('📊 결과 표시 중...');
             displayScript(currentTab);
+            console.log('🎉 완료!');
         });
 
         // ========================================
@@ -1094,6 +1118,19 @@
         // ========================================
 
         function showLoadingAnimation() {
+            console.log('🔄 로딩 애니메이션 시작...');
+
+            // Reset progress bar (프로그레스 바 초기화)
+            progressBar.style.width = '0%';
+            progressBar.classList.remove('progress-bar');
+
+            // Force reflow to restart animation (애니메이션 재시작을 위한 reflow)
+            void progressBar.offsetWidth;
+
+            // Re-add animation class
+            progressBar.classList.add('progress-bar');
+
+            // Show modal
             loadingModal.classList.remove('hidden');
             loadingModal.classList.add('flex');
 
@@ -1104,11 +1141,13 @@
             ];
 
             let currentMessageIndex = 0;
+            loadingText.textContent = messages[0];
 
             const interval = setInterval(() => {
                 currentMessageIndex++;
                 if (currentMessageIndex < messages.length) {
                     loadingText.textContent = messages[currentMessageIndex];
+                    console.log(`💬 ${messages[currentMessageIndex]}`);
                 } else {
                     clearInterval(interval);
                 }
@@ -1127,6 +1166,8 @@
         }
 
         function generateScript(type) {
+            console.log(`🎨 ${type} 타입 대본 생성 중...`);
+
             const templates = TEMPLATES[currentCategory][type];
 
             // Random selection from templates
@@ -1141,6 +1182,7 @@
             script = script.replace(/{pain}/g, currentFormData.pain);
             script = script.replace(/{solution}/g, currentFormData.solution);
 
+            console.log(`✅ ${type} 대본 생성 완료 (${script.length}자)`);
             return script;
         }
 
@@ -1158,6 +1200,7 @@
                 btn.classList.add('tab-active');
 
                 currentTab = btn.dataset.tab;
+                console.log(`🔄 탭 전환: ${currentTab}`);
                 displayScript(currentTab);
             });
         });
@@ -1167,6 +1210,8 @@
         // ========================================
 
         function displayScript(type) {
+            console.log(`📺 대본 표시: ${type} 타입`);
+
             const titles = {
                 viral: '🔥 조회수 폭발형 대본',
                 logic: '🧠 논리 설득형 대본',
@@ -1183,6 +1228,7 @@
 
             // Display hashtags
             displayHashtags();
+            console.log(`✅ 대본 표시 완료`);
         }
 
         // ========================================
@@ -1190,6 +1236,7 @@
         // ========================================
 
         function displayHashtags() {
+            console.log(`#️⃣ 해시태그 표시 중... (${currentCategory})`);
             const hashtags = HASHTAGS[currentCategory];
             hashtagsContainer.innerHTML = '';
 
@@ -1199,6 +1246,7 @@
                 span.textContent = tag;
                 hashtagsContainer.appendChild(span);
             });
+            console.log(`✅ 해시태그 ${hashtags.length}개 표시 완료`);
         }
 
         // ========================================
@@ -1206,6 +1254,7 @@
         // ========================================
 
         shuffleBtn.addEventListener('click', () => {
+            console.log('🔀 다시 섞기 시작...');
             currentScripts[currentTab] = generateScript(currentTab);
             displayScript(currentTab);
         });
@@ -1215,11 +1264,16 @@
         // ========================================
 
         copyBtn.addEventListener('click', async () => {
+            console.log('📋 복사 버튼 클릭됨');
+
             const textToCopy = currentScripts[currentTab] + '\n\n' +
                                HASHTAGS[currentCategory].join(' ');
 
+            console.log(`📝 복사할 텍스트 길이: ${textToCopy.length}자`);
+
             try {
                 await navigator.clipboard.writeText(textToCopy);
+                console.log('✅ 클립보드에 복사 성공!');
 
                 // Confetti effect
                 confetti({
@@ -1227,6 +1281,7 @@
                     spread: 70,
                     origin: { y: 0.6 }
                 });
+                console.log('🎉 폭죽 효과 실행!');
 
                 // Button feedback
                 const originalText = copyBtn.innerHTML;
@@ -1236,12 +1291,18 @@
                 setTimeout(() => {
                     copyBtn.innerHTML = originalText;
                     copyBtn.classList.remove('bg-green-600');
+                    console.log('🔄 복사 버튼 원래 상태로 복구');
                 }, 2000);
 
             } catch (err) {
+                console.error('❌ 복사 실패:', err);
                 alert('복사에 실패했습니다. 다시 시도해주세요.');
             }
         });
+
+        console.log('✅ 모든 이벤트 리스너 등록 완료!');
+
+        }); // DOMContentLoaded 종료
 
     </script>
 
