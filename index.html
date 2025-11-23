@@ -16,12 +16,6 @@
     <meta property="og:url" content="https://reelscode-script.netlify.app">
     <meta property="og:type" content="website">
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="릴스 대본 자판기 | 3초 만에 터지는 캡션 생성">
-    <meta name="twitter:description" content="빈칸 4개만 채우면 조회수 터지는 대본 3개가 쏟아집니다.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1200&h=630&fit=crop">
-
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
 
@@ -37,1713 +31,340 @@
     <!-- Canvas Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-    <style>
-        /* Custom Styles for Enhanced UX */
-        * {
-            font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        }
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/style.css">
 
-        body {
-            background: #0f172a;
-            background-image: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
-        }
-
-        /* Glassmorphism Effect */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        /* Gradient Text Effect */
-        .gradient-text {
-            background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Custom Input Styles */
-        .custom-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .custom-input:focus {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #a78bfa;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
-        }
-
-        /* Button Hover Effects */
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Tab Active State */
-        .tab-active {
-            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-            border-color: transparent;
-        }
-
-        /* Progress Bar Animation */
-        @keyframes progressAnimation {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
-
-        .progress-bar {
-            animation: progressAnimation 2.5s ease-in-out;
-        }
-
-        /* Fade In Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155'
+                        },
+                        brand: {
+                            500: '#8b5cf6',
+                            600: '#7c3aed'
+                        }
+                    }
+                }
             }
         }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* Loading Modal Backdrop */
-        .modal-backdrop {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-        }
-
-        /* Pulse Animation for Loading */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        /* Result Card Hover */
-        .result-card {
-            transition: all 0.3s ease;
-        }
-
-        .result-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
-        }
-
-        /* Cross-Selling Banner Gradient */
-        .cross-sell-banner {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(167, 139, 250, 0.5);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(167, 139, 250, 0.8);
-        }
-    </style>
+    </script>
 </head>
-<body class="antialiased">
+<body class="bg-dark-900 text-white min-h-screen overflow-x-hidden selection:bg-brand-500 selection:text-white">
 
-    <!-- Main Container -->
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-
-        <!-- Header Section -->
-        <header class="text-center mb-12 fade-in">
-            <div class="inline-block mb-4">
-                <span class="text-6xl">🎬</span>
+    <!-- Header -->
+    <nav class="w-full border-b border-white/10 bg-dark-900/80 backdrop-blur-md fixed top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🎬</span>
+                <span class="font-bold text-xl tracking-tight">Reels Code</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                릴스 대본 <span class="gradient-text">자판기</span>
-            </h1>
-            <p class="text-gray-300 text-lg md:text-xl mb-2">
-                빈칸 4개만 채우면 조회수 터지는 대본 3개가 쏟아집니다
-            </p>
-            <p class="text-purple-400 text-sm">
-                <i class="fas fa-robot mr-2"></i>AI 마케팅 툴 by Reels Code
-            </p>
-        </header>
-
-        <!-- Input Form Section -->
-        <section id="inputSection" class="glass-card rounded-2xl p-8 mb-8 fade-in">
-            <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
-                <i class="fas fa-edit mr-3 text-purple-400"></i>
-                대본 생성 정보 입력
-            </h2>
-
-            <form id="scriptForm" class="space-y-6" onsubmit="return false;" action="javascript:void(0);">
-                <!-- Category Selection -->
-                <div>
-                    <label class="block text-gray-300 font-semibold mb-3">
-                        <i class="fas fa-tag mr-2"></i>업종 선택
-                    </label>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                        <button type="button" class="category-btn custom-input text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-600 transition-all" data-category="common">
-                            공통
-                        </button>
-                        <button type="button" class="category-btn custom-input text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-600 transition-all" data-category="beauty">
-                            뷰티·패션
-                        </button>
-                        <button type="button" class="category-btn custom-input text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-600 transition-all" data-category="food">
-                            맛집·카페
-                        </button>
-                        <button type="button" class="category-btn custom-input text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-600 transition-all" data-category="education">
-                            지식·교육
-                        </button>
-                        <button type="button" class="category-btn custom-input text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-600 transition-all" data-category="professional">
-                            전문직·부동산
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Product Input -->
-                <div>
-                    <label for="product" class="block text-gray-300 font-semibold mb-2">
-                        <i class="fas fa-box mr-2"></i>상품명/서비스명
-                    </label>
-                    <input
-                        type="text"
-                        id="product"
-                        class="custom-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-500"
-                        placeholder="예: 콜라겐 앰플, 브런치 카페, 온라인 강의"
-                    >
-                </div>
-
-                <!-- Target Input -->
-                <div>
-                    <label for="target" class="block text-gray-300 font-semibold mb-2">
-                        <i class="fas fa-users mr-2"></i>타겟 고객
-                    </label>
-                    <input
-                        type="text"
-                        id="target"
-                        class="custom-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-500"
-                        placeholder="예: 20대 여성, 직장인, 수험생"
-                    >
-                </div>
-
-                <!-- Pain Point Input -->
-                <div>
-                    <label for="pain" class="block text-gray-300 font-semibold mb-2">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>고객의 문제점/고민
-                    </label>
-                    <input
-                        type="text"
-                        id="pain"
-                        class="custom-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-500"
-                        placeholder="예: 피부 탄력 저하, 점심 메뉴 고민, 시간 부족"
-                    >
-                </div>
-
-                <!-- Solution Input -->
-                <div>
-                    <label for="solution" class="block text-gray-300 font-semibold mb-2">
-                        <i class="fas fa-lightbulb mr-2"></i>해결책/효과
-                    </label>
-                    <input
-                        type="text"
-                        id="solution"
-                        class="custom-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-500"
-                        placeholder="예: 피부 탄력 200% 개선, 건강한 한 끼, 30분 완강 가능"
-                    >
-                </div>
-
-                <!-- Submit Button -->
-                <button
-                    type="submit"
-                    class="btn-primary w-full py-4 rounded-lg text-white font-bold text-lg shadow-lg"
-                >
-                    <i class="fas fa-magic mr-2"></i>대본 생성하기
+            <div class="flex gap-4">
+                 <!-- Future: History Button, Dark Mode Toggle -->
+                <button id="historyBtn" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-history mr-1"></i> 보관함
                 </button>
-            </form>
-        </section>
+            </div>
+        </div>
+    </nav>
 
-        <!-- Results Section (Hidden Initially) -->
-        <section id="resultsSection" class="hidden">
-            <!-- Tab Navigation -->
-            <div class="glass-card rounded-2xl p-4 mb-6 fade-in">
-                <div class="grid grid-cols-3 gap-3">
-                    <button class="tab-btn tab-active py-3 px-4 rounded-lg font-bold text-white transition-all" data-tab="viral">
-                        🔥 조회수 폭발형
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 pt-24 pb-12">
+
+        <!-- Title Section -->
+        <div class="text-center mb-12 fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                터지는 릴스 대본 <br class="md:hidden" />
+                <span class="gradient-text">3초 만에 완성</span>
+            </h1>
+            <p class="text-gray-400 text-lg">빈칸만 채우면 AI가 팔리는 캡션을 만들어 드립니다.</p>
+        </div>
+
+        <!-- Split View Container -->
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
+
+            <!-- LEFT: Input Form -->
+            <div class="w-full lg:w-5/12 space-y-8 fade-in delay-100">
+
+                <form id="scriptForm" class="space-y-8" onsubmit="return false;">
+
+                    <!-- 1. Category -->
+                    <div class="bg-dark-800/50 p-6 rounded-2xl border border-white/10">
+                        <label class="block text-sm font-bold text-gray-300 mb-4 uppercase tracking-wider">
+                            <i class="fas fa-tag mr-2 text-brand-500"></i>STEP 1. 업종 선택
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <button type="button" class="category-btn group relative flex flex-col items-center justify-center p-4 rounded-xl bg-dark-900 border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all duration-300" data-category="common">
+                                <span class="text-2xl mb-2">✨</span>
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white">공통</span>
+                                <div class="absolute inset-0 border-2 border-brand-500 rounded-xl opacity-0 scale-95 transition-all category-active-border"></div>
+                            </button>
+                            <button type="button" class="category-btn group relative flex flex-col items-center justify-center p-4 rounded-xl bg-dark-900 border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all duration-300" data-category="beauty">
+                                <span class="text-2xl mb-2">💄</span>
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white">뷰티/패션</span>
+                                <div class="absolute inset-0 border-2 border-brand-500 rounded-xl opacity-0 scale-95 transition-all category-active-border"></div>
+                            </button>
+                            <button type="button" class="category-btn group relative flex flex-col items-center justify-center p-4 rounded-xl bg-dark-900 border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all duration-300" data-category="food">
+                                <span class="text-2xl mb-2">🍔</span>
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white">맛집/푸드</span>
+                                <div class="absolute inset-0 border-2 border-brand-500 rounded-xl opacity-0 scale-95 transition-all category-active-border"></div>
+                            </button>
+                            <button type="button" class="category-btn group relative flex flex-col items-center justify-center p-4 rounded-xl bg-dark-900 border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all duration-300" data-category="education">
+                                <span class="text-2xl mb-2">📚</span>
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white">지식/교육</span>
+                                <div class="absolute inset-0 border-2 border-brand-500 rounded-xl opacity-0 scale-95 transition-all category-active-border"></div>
+                            </button>
+                            <button type="button" class="category-btn group relative flex flex-col items-center justify-center p-4 rounded-xl bg-dark-900 border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all duration-300" data-category="professional">
+                                <span class="text-2xl mb-2">💼</span>
+                                <span class="text-sm font-medium text-gray-300 group-hover:text-white">전문직</span>
+                                <div class="absolute inset-0 border-2 border-brand-500 rounded-xl opacity-0 scale-95 transition-all category-active-border"></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 1.5. Tone & Manner -->
+                    <div class="bg-dark-800/50 p-6 rounded-2xl border border-white/10">
+                        <label class="block text-sm font-bold text-gray-300 mb-4 uppercase tracking-wider">
+                            <i class="fas fa-sliders-h mr-2 text-brand-500"></i>STEP 2. 어조(Tone) 선택
+                        </label>
+                        <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                            <button type="button" class="tone-btn flex-1 min-w-[80px] py-2 px-3 rounded-lg border border-brand-500 bg-brand-500/20 text-white text-sm font-medium transition-all hover:bg-brand-500/30 whitespace-nowrap" data-tone="basic">
+                                🙂 기본
+                            </button>
+                            <button type="button" class="tone-btn flex-1 min-w-[80px] py-2 px-3 rounded-lg border border-white/10 bg-dark-900 text-gray-400 text-sm font-medium transition-all hover:bg-dark-800 hover:text-white whitespace-nowrap" data-tone="humor">
+                                🤪 유머
+                            </button>
+                            <button type="button" class="tone-btn flex-1 min-w-[80px] py-2 px-3 rounded-lg border border-white/10 bg-dark-900 text-gray-400 text-sm font-medium transition-all hover:bg-dark-800 hover:text-white whitespace-nowrap" data-tone="emotional">
+                                💧 감성
+                            </button>
+                            <button type="button" class="tone-btn flex-1 min-w-[80px] py-2 px-3 rounded-lg border border-white/10 bg-dark-900 text-gray-400 text-sm font-medium transition-all hover:bg-dark-800 hover:text-white whitespace-nowrap" data-tone="impact">
+                                ⚡️ 강력
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Inputs -->
+                    <div class="bg-dark-800/50 p-6 rounded-2xl border border-white/10 space-y-5">
+                         <label class="block text-sm font-bold text-gray-300 mb-4 uppercase tracking-wider">
+                            <i class="fas fa-pen mr-2 text-brand-500"></i>STEP 3. 핵심 정보 입력
+                        </label>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">상품/서비스명</label>
+                            <input type="text" id="product" class="w-full bg-dark-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all placeholder-gray-600" placeholder="예: 콜라겐 앰플, 영어 강의">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">타겟 고객</label>
+                            <input type="text" id="target" class="w-full bg-dark-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all placeholder-gray-600" placeholder="예: 30대 직장인, 수험생">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">고객의 문제점(Pain Point)</label>
+                            <input type="text" id="pain" class="w-full bg-dark-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all placeholder-gray-600" placeholder="예: 피부 탄력 저하, 점심 메뉴 고민">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 mb-1 ml-1">해결책/효과(Solution)</label>
+                            <input type="text" id="solution" class="w-full bg-dark-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all placeholder-gray-600" placeholder="예: 탱탱한 피부, 맛있는 한 끼">
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="w-full py-4 bg-gradient-to-r from-brand-500 to-purple-600 rounded-xl font-bold text-lg text-white shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center group">
+                        <span class="mr-2">✨ 매직 대본 생성하기</span>
+                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
-                    <button class="tab-btn custom-input py-3 px-4 rounded-lg font-bold text-white transition-all" data-tab="logic">
-                        🧠 논리 설득형
-                    </button>
-                    <button class="tab-btn custom-input py-3 px-4 rounded-lg font-bold text-white transition-all" data-tab="sales">
-                        💰 당장 사세요형
-                    </button>
-                </div>
+
+                </form>
             </div>
 
-            <!-- Result Content -->
-            <div class="glass-card rounded-2xl p-8 mb-6 result-card fade-in">
-                <div class="flex justify-between items-start mb-6">
-                    <h3 class="text-2xl font-bold text-white" id="resultTitle">
-                        🔥 조회수 폭발형 대본
-                    </h3>
-                    <div class="flex gap-2">
-                        <button id="shuffleBtn" class="custom-input px-4 py-2 rounded-lg text-white font-medium hover:bg-purple-600 transition-all">
-                            <i class="fas fa-sync-alt mr-2"></i>다시 섞기
+            <!-- RIGHT: Preview (Phone Mockup) -->
+            <div class="w-full lg:w-7/12 sticky top-24 fade-in delay-200">
+
+                <!-- Tab Navigation for Results -->
+                <div class="flex justify-center mb-6 bg-dark-800/50 p-1 rounded-xl border border-white/10 inline-flex w-full">
+                    <button class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-all data-[active=true]:bg-brand-500 data-[active=true]:text-white data-[active=true]:shadow-lg" data-tab="viral">
+                        🔥 바이럴형
+                    </button>
+                    <button class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-all data-[active=true]:bg-brand-500 data-[active=true]:text-white data-[active=true]:shadow-lg" data-tab="logic">
+                        🧠 논리형
+                    </button>
+                    <button class="tab-btn flex-1 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-all data-[active=true]:bg-brand-500 data-[active=true]:text-white data-[active=true]:shadow-lg" data-tab="sales">
+                        💰 판매형
+                    </button>
+                </div>
+
+                <!-- Smartphone Frame -->
+                <div class="relative mx-auto border-gray-800 bg-gray-900 border-[14px] rounded-[2.5rem] h-[700px] w-[360px] md:w-[400px] shadow-xl ring ring-white/5">
+
+                    <!-- Notch / Camera -->
+                    <div class="w-[148px] h-[18px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
+
+                    <!-- Screen Content -->
+                    <div class="h-[672px] w-full bg-black rounded-[2rem] overflow-hidden relative flex flex-col">
+
+                        <!-- Instagram Header -->
+                        <div class="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 p-[2px]">
+                                    <div class="w-full h-full rounded-full bg-black border-2 border-black overflow-hidden">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-full h-full object-cover">
+                                    </div>
+                                </div>
+                                <span class="text-xs font-semibold text-white">reels_master</span>
+                            </div>
+                            <i class="fas fa-ellipsis text-white"></i>
+                        </div>
+
+                        <!-- Main Scrollable Area -->
+                        <div class="flex-1 overflow-y-auto custom-scrollbar bg-black">
+
+                            <!-- Placehoder Image -->
+                            <div class="aspect-[4/5] w-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative group cursor-pointer">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
+                                    <i class="fas fa-play text-4xl mb-2 opacity-50"></i>
+                                    <span class="text-xs">Video Preview</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <div class="flex gap-4 text-2xl text-white">
+                                    <i class="far fa-heart cursor-pointer hover:text-red-500 transition-colors"></i>
+                                    <i class="far fa-comment cursor-pointer hover:text-gray-300 transition-colors"></i>
+                                    <i class="far fa-paper-plane cursor-pointer hover:text-gray-300 transition-colors"></i>
+                                </div>
+                                <button id="saveToHistoryBtn" class="text-2xl text-white hover:text-brand-500 transition-colors" title="보관함에 저장">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+
+                            <!-- Likes -->
+                            <div class="px-4 mb-2">
+                                <p class="text-sm font-semibold text-white">좋아요 1,234개</p>
+                            </div>
+
+                            <!-- Caption Area (Dynamic Content) -->
+                            <div class="px-4 pb-8">
+                                <p class="text-sm text-white leading-relaxed whitespace-pre-line" id="phoneCaption">
+                                    <span class="font-semibold mr-1">reels_master</span>
+                                    <span id="captionText" class="text-gray-200">
+                                        👈 왼쪽에서 정보를 입력하고<br>
+                                        '매직 대본 생성하기'를 눌러보세요!<br><br>
+                                        AI가 3초 만에 팔리는 캡션을 완성해 드립니다. ✨
+                                    </span>
+                                    <br><br>
+                                    <span id="captionHashtags" class="text-brand-500">
+                                        #릴스대본 #마케팅 #인스타그램
+                                    </span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2 uppercase">2 hours ago</p>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Tab Bar -->
+                        <div class="h-12 border-t border-white/10 flex items-center justify-around text-white text-xl shrink-0 bg-black">
+                            <i class="fas fa-home"></i>
+                            <i class="fas fa-search text-gray-500"></i>
+                            <i class="far fa-plus-square text-gray-500"></i>
+                            <i class="fas fa-film text-gray-500"></i>
+                            <div class="w-6 h-6 rounded-full bg-gray-700"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons Overlay (Outside Phone) -->
+                    <div class="absolute -right-16 bottom-20 flex flex-col gap-3 z-10 hidden md:flex">
+                        <button id="copyBtn" class="w-12 h-12 rounded-full bg-white text-brand-600 shadow-lg flex items-center justify-center hover:scale-110 transition-transform tooltip-btn" title="복사하기">
+                            <i class="fas fa-copy"></i>
                         </button>
-                        <button id="copyBtn" class="btn-primary px-4 py-2 rounded-lg text-white font-medium">
-                            <i class="fas fa-copy mr-2"></i>복사
+                        <button id="shuffleBtn" class="w-12 h-12 rounded-full bg-dark-800 text-white border border-white/20 shadow-lg flex items-center justify-center hover:scale-110 transition-transform tooltip-btn" title="다시 생성">
+                            <i class="fas fa-sync-alt"></i>
                         </button>
+                         <!-- Mobile-only buttons will be positioned differently or reused -->
                     </div>
-                </div>
 
-                <div id="scriptContent" class="text-gray-200 text-lg leading-relaxed whitespace-pre-line mb-6">
-                    <!-- Script content will be injected here -->
-                </div>
+                     <!-- Mobile Action Buttons (Visible only on small screens, below phone) -->
+                     <div class="md:hidden absolute -bottom-16 left-0 right-0 flex justify-center gap-4">
+                         <button id="copyBtnMobile" class="flex-1 py-3 bg-white text-brand-600 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2">
+                             <i class="fas fa-copy"></i> 전체 복사
+                         </button>
+                         <button id="shuffleBtnMobile" class="flex-1 py-3 bg-dark-800 text-white border border-white/20 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2">
+                             <i class="fas fa-sync-alt"></i> 다시 생성
+                         </button>
+                     </div>
 
-                <!-- Auto Hashtags -->
-                <div class="border-t border-gray-700 pt-6">
-                    <h4 class="text-white font-semibold mb-3 flex items-center">
-                        <i class="fas fa-hashtag mr-2 text-purple-400"></i>
-                        추천 해시태그
-                    </h4>
-                    <div id="hashtagsContainer" class="flex flex-wrap gap-2">
-                        <!-- Hashtags will be injected here -->
-                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="bg-dark-800 border border-white/10 rounded-3xl shadow-2xl max-w-2xl w-full mx-4 flex flex-col max-h-[80vh]">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white">
+                    <i class="fas fa-history mr-2 text-brand-500"></i> 내 대본 보관함
+                </h3>
+                <button id="closeHistoryBtn" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (List) -->
+            <div id="historyList" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                <!-- History Items will be injected here -->
+                <div class="text-center text-gray-500 py-8">
+                    보관된 대본이 없습니다.
                 </div>
             </div>
 
-            <!-- Cross-Selling Banner -->
-            <div class="cross-sell-banner rounded-2xl p-6 mb-8 fade-in">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="text-white">
-                        <p class="text-lg font-semibold mb-1">내 계정 상태가 궁금하다면?</p>
-                        <p class="text-sm text-purple-100">인스타그램 계정 건강도를 무료로 체크하세요</p>
-                    </div>
-                    <a
-                        href="https://checkinstascore.netlify.app"
-                        target="_blank"
-                        class="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-purple-50 transition-all whitespace-nowrap shadow-lg"
-                    >
-                        👉 인스타 정밀 진단 받기
-                    </a>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
-        <div class="glass-card rounded-2xl p-8 max-w-md w-full mx-4">
-            <div class="text-center">
-                <div class="mb-6">
-                    <i class="fas fa-robot text-6xl text-purple-400 pulse"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4">AI 분석 중...</h3>
-                <p id="loadingText" class="text-gray-300 mb-6 h-6">
-                    업종별 톤앤매너 분석 중...
-                </p>
-                <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-                    <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-                </div>
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-white/10 bg-dark-900/50 rounded-b-3xl">
+                <button id="clearHistoryBtn" class="text-sm text-red-400 hover:text-red-300 transition-colors">
+                    <i class="fas fa-trash-alt mr-1"></i> 전체 삭제
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center py-8 text-gray-500 text-sm">
-        <p>© 2024 Reels Code. All rights reserved.</p>
-        <p class="mt-2">Made with 💜 for Marketers</p>
-    </footer>
+    <!-- Loading Modal (Overlay) -->
+    <div id="loadingModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="bg-dark-800 border border-white/10 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+             <!-- Background Glow -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 via-purple-500 to-pink-500 animate-loading-bar"></div>
 
-    <script>
-        // ========================================
-        // WAIT FOR DOM TO BE FULLY LOADED
-        // ========================================
+            <div class="mb-6 relative">
+                <div class="w-20 h-20 mx-auto bg-brand-500/20 rounded-full flex items-center justify-center animate-pulse">
+                    <span class="text-4xl">🪄</span>
+                </div>
+            </div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎬 릴스 대본 자판기 시작!');
+            <h3 class="text-2xl font-bold text-white mb-2">AI가 생각 중...</h3>
+            <p id="loadingText" class="text-gray-400 text-sm">업종별 트렌드를 분석하고 있어요</p>
+        </div>
+    </div>
 
-        // ========================================
-        // TEMPLATE DATABASE (Smart Slot Machine)
-        // ========================================
+    <!-- Load Data -->
+    <script src="js/data.js"></script>
+    <!-- Main App Logic -->
+    <script src="js/app.js"></script>
 
-        const TEMPLATES = {
-            // 공통 템플릿
-            common: {
-                viral: {
-                    hooks: [
-                        "{pain}{으/는} 사람 손",
-                        "나만 {pain} 심한 거 아니지",
-                        "이거 모르고 쓰는 사람 많던데",
-                        "{pain} 때문에 스트레스받는 중",
-                        "진작 이렇게 할 걸",
-                        "{target}이라면 다 아는 그 고민",
-                        "아무도 안 알려주는 방법",
-                        "{pain}{이/가} 진짜 짜증남",
-                        "이거 알고 나서 삶의 질 올라감",
-                        "속는 셈 치고 한 번 해봐",
-                        "{target} 필수템 발견함",
-                        "3일 써봤는데",
-                        "처음엔 의심했는데",
-                        "이거 하나로 달라짐",
-                        "{pain} 고민하는 사람 봐",
-                        "우연히 {product} 알게 됐는데",
-                        "친구가 추천해줘서 써봤더니",
-                        "이걸 진작 알았으면",
-                        "{target}이면 저장해둬",
-                        "생각보다 훨씬 괜찮음"
-                    ],
-                    bodies: [
-                        "\n\n{product} 써보니\n{solution}\n\n{pain} 확실히 나아짐\n\n",
-                        "\n\n{product}{으/로} 바꿨더니\n{solution} 느껴짐\n\n이제 {pain} 안 생김\n\n",
-                        "\n\n{target}한테 물어봤더니\n다들 {product} 쓴대\n\n나도 써봤는데 {solution}\n\n",
-                        "\n\n{pain} 때문에 힘들었는데\n{product} 쓰고 나서\n{solution}\n\n",
-                        "\n\n우연히 알게 된 {product}\n3일째 쓰는데\n{solution} 확실함\n\n",
-                        "\n\n{product}{이/가} 답인 이유\n{solution}\n실제로 써본 결과임\n\n",
-                        "\n\n나 {pain} 심했거든\n{product} 써봤더니\n{solution}\n\n개인차는 있겠지만\n\n",
-                        "\n\n{target}이라면\n{product} 한 번은 써봐\n\n{solution} 체감됨\n\n",
-                        "\n\n{pain}{으/로} 고민하던 중\n{product} 발견\n\n{solution}\n생각보다 좋음\n\n",
-                        "\n\n친구 따라 {product} 써봤는데\n{solution}\n\n{pain} 많이 나아짐\n\n",
-                        "\n\n{product} 1주일 써본 후기\n{solution}\n\n계속 쓸 예정\n\n",
-                        "\n\n{pain} 있는 사람은\n{product} 써봐\n\n{solution} 도움됨\n\n",
-                        "\n\n반신반의하고 {product} 썼는데\n{solution}\n\n솔직히 놀랐음\n\n",
-                        "\n\n{product}{을/를} 쓰니까\n{pain} 개선됨\n\n{solution} 확실함\n\n",
-                        "\n\n{target}한테 추천받은 {product}\n3일 써봤더니\n{solution}\n\n",
-                        "\n\n처음엔 별 기대 안 했는데\n{product} 쓰고\n{solution}\n\n효과 있음\n\n",
-                        "\n\n{pain} 심해서 찾아보다가\n{product} 발견\n\n{solution} 체감\n\n",
-                        "\n\n{product} 쓰기 전 vs 후\n{solution}\n\n확실히 달라짐\n\n",
-                        "\n\n이거 진짜임\n{product}{으/로}\n{solution}\n\n{pain} 나아짐\n\n",
-                        "\n\n{target}이면 공감할 듯\n{product} 쓰고\n{solution} 느낌\n\n"
-                    ],
-                    closings: [
-                        "링크에 내가 쓴 거",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 써봐",
-                        "효과 있으면 댓글 남겨줘",
-                        "제품명 프로필에 있음",
-                        "나중에 필요하면 저장",
-                        "DM으로 물어봐도 됨",
-                        "링크 타고 가서 확인",
-                        "프로필 체크",
-                        "궁금하면 댓글 남겨",
-                        "1주일 써보고 판단해",
-                        "속는 셈 치고 해봐",
-                        "개인차는 있음",
-                        "후기 궁금하면 댓글",
-                        "저장하고 기억해둬"
-                    ]
-                },
-                logic: {
-                    hooks: [
-                        "{pain}{이/가} 생기는 이유",
-                        "{target}이 많이 하는 실수",
-                        "이거 모르고 하면 소용없음",
-                        "{product} 제대로 쓰는 법",
-                        "{pain} 해결하려면",
-                        "전문가가 알려주는 방법",
-                        "{target}이라면 알아야 할 것",
-                        "효율 3배 올리는 법",
-                        "{pain} 원인은 이거였음",
-                        "이렇게 하면 {solution}",
-                        "{product} 효과 제대로 보는 법",
-                        "대부분 이거 모름",
-                        "{pain} 제대로 대응하기",
-                        "실제로 효과 본 방법",
-                        "{target}을 위한 가이드",
-                        "이것만 바꿔도 달라짐",
-                        "{product} 선택 기준",
-                        "잘못 알려진 상식",
-                        "{pain} 예방법",
-                        "효과적인 순서"
-                    ],
-                    bodies: [
-                        "\n\n{pain}{이/가} 생기는 이유\n대부분 방법이 잘못됨\n\n{product}{으/로} 바꾸면\n{solution}\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain}{을/를} 그냥 둠\n\n{product} 쓰면\n{solution} 가능\n\n",
-                        "\n\n{product} 선택할 때\n이것만 확인하면 됨\n\n{solution}\n실제 효과 본 기준\n\n",
-                        "\n\n{pain} 해결하려면\n순서가 중요함\n\n{product} 이렇게 쓰면\n{solution}\n\n",
-                        "\n\n{target}이 모르는 팁\n{product}{을/를}\n이렇게 활용하면\n{solution}\n\n",
-                        "\n\n{pain}{은/는}\n방치하면 안 됨\n\n{product}{으/로}\n{solution} 가능\n\n",
-                        "\n\n효과 제대로 보려면\n{product} 이렇게 써야 함\n\n그래야 {solution}\n\n",
-                        "\n\n{target}한테 물어보니\n다들 {product} 씀\n\n이유는 {solution}\n\n",
-                        "\n\n{pain} 원인 3가지\n대부분 방법 문제\n\n{product}{으/로} 바꾸니\n{solution}\n\n",
-                        "\n\n{product} vs 다른 방법\n차이는 이거임\n\n{solution}\n실제 비교 결과\n\n",
-                        "\n\n{pain} 있으면\n이것부터 확인\n\n{product} 맞으면\n{solution}\n\n",
-                        "\n\n전문가 추천 방법\n{product} 이렇게 쓰기\n\n{solution} 효과\n\n",
-                        "\n\n{target}을 위한 팁\n{pain} 예방법\n\n{product} 꾸준히 쓰면\n{solution}\n\n",
-                        "\n\n이거 모르면 손해\n{product} 활용법\n\n{solution} 가능\n\n",
-                        "\n\n{pain} 해결한 방법\n{product} 썼더니\n{solution}\n\n효과 있었음\n\n"
-                    ],
-                    closings: [
-                        "도움됐으면 저장",
-                        "궁금한 거 댓글로 물어봐",
-                        "자세한 건 프로필 링크",
-                        "팔로우하면 더 많은 팁",
-                        "저장해두고 써먹어",
-                        "DM으로 물어봐도 됨",
-                        "다음 편도 봐줘",
-                        "공유하면 도움됨",
-                        "링크에 더 많은 정보",
-                        "댓글로 경험 공유해줘"
-                    ]
-                },
-                sales: {
-                    hooks: [
-                        "{product} 쓰는 사람들 후기",
-                        "내가 쓴 {product} 솔직 리뷰",
-                        "{pain}{이/가} 나아진 이유",
-                        "재구매 3번째",
-                        "돈 아깝지 않은 {product}",
-                        "{target}한테 추천하는 이유",
-                        "비싸도 살 만한 가치",
-                        "가성비 따지면 이거",
-                        "{product}{으/로} 바꾼 후",
-                        "이거 쓰고 {pain} 줄었음",
-                        "주변에서 다 쓰길래",
-                        "반신반의했는데",
-                        "{product} 3개월 써본 결과",
-                        "프로필에 구매처 있음",
-                        "이거 아직도 안 써봤어",
-                        "다른 거 쓰다가 이걸로",
-                        "{pain} 때문에 찾아봤는데",
-                        "가격 대비 만족도",
-                        "{target}이 많이 찾는 이유",
-                        "내 돈 주고 산 솔직 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 써보니\n{solution} 확실히 됨\n\n{pain}{은/는} 많이 나아짐\n가격 생각하면 괜찮음\n\n",
-                        "\n\n처음엔 비싸다 싶었는데\n{pain}{이/가} 줄어드니까\n결과적으로 이득\n\n{solution} 되는 거 보고\n재구매 결정\n\n",
-                        "\n\n{target}이 많이 쓰는 이유\n알겠더라\n\n{product}{으/로} 바꾸니까\n{solution}\n\n{pain} 고민 덜함\n\n",
-                        "\n\n3개월 써본 솔직 후기\n\n장점: {solution}\n{pain} 확실히 개선됨\n\n단점: 가격이 좀 있음\n그래도 재구매함\n\n",
-                        "\n\n프로필에 내가 쓴 거 링크\n\n{product}{이/가}\n{pain} 해결해줌\n\n{solution} 느껴짐\n\n",
-                        "\n\n{pain} 고민하다가\n{product} 써봤는데\n\n{solution} 되는 거 보고\n주변에 추천함\n\n가격은 있지만 효과 있음\n\n",
-                        "\n\n반신반의하고 샀는데\n생각보다 괜찮음\n\n{product}{으/로}\n{solution}\n\n{pain}{은/는} 줄어듦\n\n",
-                        "\n\n다른 {target} 후기 보고\n나도 사봤는데\n\n{pain}{이/가} 나아짐\n{solution} 확실함\n\n재구매 의향 있음\n\n",
-                        "\n\n{product} 쓴 지 2주\n\n{pain} 많이 줄었고\n{solution} 느껴짐\n\n가성비 따지면 나쁘지 않음\n\n",
-                        "\n\n처음엔 의심했는데\n{target} 후기 많길래 시도\n\n{product}{으/로}\n{pain} 해결됨\n\n{solution} 생각하면 만족\n\n",
-                        "\n\n내 돈 주고 산 후기\n\n{product}{이/가}\n{pain}{을/를} 케어해줌\n\n{solution}\n가격값 함\n\n",
-                        "\n\n{target}이 많이 쓰는 거\n이유 있더라\n\n{pain} 고민 줄고\n{solution}\n\n프로필에 구매처\n\n",
-                        "\n\n비싸다고 생각했는데\n{pain} 나아지니까\n결과적으로 이득\n\n{product}{으/로}\n{solution} 가능\n\n",
-                        "\n\n{product} 3개월 사용 후기\n\n{pain} 확실히 개선\n{solution} 느껴짐\n\n재구매 예정\n\n",
-                        "\n\n주변 추천 받고 써봤는데\n{pain}{이/가} 줄어듦\n\n{product}{으/로}\n{solution}\n\n만족함\n\n",
-                        "\n\n{pain} 때문에 고민하다가\n{product} 시도\n\n{solution} 되는 거 보고\n계속 씀\n\n프로필에 링크 있음\n\n",
-                        "\n\n다른 거 쓰다가\n{product}{으/로} 바꿈\n\n{pain} 나아지고\n{solution}\n\n괜찮은 선택이었음\n\n",
-                        "\n\n{target} 후기 많길래\n나도 써봤는데\n\n{product}{이/가}\n{pain}{을/를} 케어\n\n{solution} 만족\n\n",
-                        "\n\n가격 대비 효과\n\n{pain} 줄어듦\n{solution} 확실\n\n{product} 추천\n\n",
-                        "\n\n솔직히 비싸긴 한데\n{pain}{이/가} 나아지니까\n\n{product}{으/로}\n{solution}\n\n재구매함\n\n"
-                    ],
-                    closings: [
-                        "프로필에 구매처",
-                        "링크 있음",
-                        "내가 쓴 거 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유해줘",
-                        "저장해두고 나중에 봐",
-                        "궁금하면 프로필 확인",
-                        "써본 사람들 후기 많음",
-                        "이거 쓰는 사람 손",
-                        "재구매 의향 있으면 저장",
-                        "가격 비교해보고 결정",
-                        "프로필 타고 들어가면 있음",
-                        "내 돈 주고 산 거라 솔직함",
-                        "추천 받고 싶으면 DM",
-                        "후기 더 궁금하면 댓글"
-                    ]
-                }
-            },
-
-            // 뷰티·패션 템플릿
-            beauty: {
-                viral: {
-                    hooks: [
-                        "{pain}{은/는} 사람 손",
-                        "피부과 의사한테 들은 방법",
-                        "이거 쓰고 피부 칭찬받음",
-                        "{product} 3주 써본 후기",
-                        "화장 안 먹히는 사람 봐",
-                        "아침에 거울 보고 놀람",
-                        "{target}이 많이 하는 실수",
-                        "피부 좋아지는 거 느껴짐",
-                        "메이크업 시간 반으로 줄음",
-                        "이거 모르고 화장하는 사람 많던데",
-                        "{pain}{이/가} 나아진 이유",
-                        "속는 셈 치고 써봤는데",
-                        "피부 관리 이렇게 하니까",
-                        "기초부터 다시 한 결과",
-                        "화장품 바꿨더니",
-                        "{product}{으/로} 바꾼 후",
-                        "피부과 가기 전에 이거",
-                        "진작 이렇게 할 걸",
-                        "{target} 필수 루틴",
-                        "화장 잘 받는 피부 만드는 법"
-                    ],
-                    bodies: [
-                        "\n\n{product} 써보니\n{pain} 확실히 나아짐\n\n{solution} 느껴지고\n화장도 잘 먹힌다\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain}{을/를} 그냥 둠\n\n{product} 쓰니까\n{solution}\n\n피부 좋아졌다는 말 들음\n\n",
-                        "\n\n아침 루틴에 추가했더니\n{pain} 줄어듦\n\n{product}{으/로}\n{solution}\n\n화장 시간 반 줄음\n\n",
-                        "\n\n피부과 의사한테 들은 건데\n{pain}{은/는}\n기초 케어가 중요함\n\n{product} 쓰니까\n{solution} 확실\n\n",
-                        "\n\n3주 써본 솔직 후기\n\n{pain} 나아지고\n{solution} 느껴짐\n\n거울 볼 때 기분 좋음\n\n",
-                        "\n\n{product}{으/로} 바꿨더니\n{pain} 많이 줄었음\n\n{solution}\n화장 잘 받음\n\n",
-                        "\n\n피부 관리 다시 시작\n{product} 쓰니까\n\n{pain} 개선되고\n{solution}\n\n칭찬받음\n\n",
-                        "\n\n{target}한테 추천하는 이유\n\n{pain}{을/를} 케어해줌\n{solution} 확실함\n\n프로필에 내가 쓴 거\n\n",
-                        "\n\n화장품 바꾼 후\n{pain}{이/가} 나아짐\n\n{product}{으/로}\n{solution}\n\n만족함\n\n",
-                        "\n\n기초 루틴 정리했더니\n{pain} 줄어듦\n\n{product} 추가하고\n{solution} 느껴짐\n\n",
-                        "\n\n속는 셈 치고 써봤는데\n{pain} 개선됨\n\n{product}{이/가}\n{solution} 도와줌\n\n",
-                        "\n\n피부과 가기 전에\n{product} 먼저 써봄\n\n{pain} 나아지고\n{solution}\n\n생각보다 좋음\n\n",
-                        "\n\n{target} 루틴에 추가\n\n{pain}{은/는} 줄고\n{solution} 확실\n\n화장 잘 먹힘\n\n",
-                        "\n\n아침 거울 보고 놀람\n{pain}{이/가} 나아짐\n\n{product} 쓴 지 2주\n{solution} 느껴짐\n\n",
-                        "\n\n화장 안 먹히는 사람\n{product} 써봐\n\n{pain} 케어되고\n{solution}\n\n",
-                        "\n\n{pain} 때문에 고민하다가\n{product} 시도\n\n{solution} 되는 거 보고\n계속 씀\n\n",
-                        "\n\n피부 좋아지는 거 느낌\n{product} 쓴 후\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n기초부터 다시 했더니\n{pain} 개선\n\n{product}{으/로}\n{solution} 확실\n\n",
-                        "\n\n{target}이 많이 쓰는 거\n이유 있더라\n\n{pain} 케어되고\n{solution}\n\n",
-                        "\n\n진작 {product} 쓸 걸\n{pain} 나아지고\n\n{solution}\n화장 잘 받음\n\n"
-                    ],
-                    closings: [
-                        "프로필에 구매처",
-                        "링크 있음",
-                        "내가 쓴 거 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 봐",
-                        "궁금하면 프로필 확인",
-                        "루틴 더 궁금하면 DM",
-                        "사용법 댓글로 공유",
-                        "피부 타입별 추천 가능",
-                        "성분 궁금하면 물어봐",
-                        "써본 사람들 후기 많음",
-                        "프로필 타고 들어가면 있음",
-                        "추천 받고 싶으면 댓글",
-                        "후기 더 궁금하면 프로필"
-                    ]
-                },
-                logic: {
-                    hooks: [
-                        "{pain}{이/가} 생기는 이유",
-                        "{target}이 많이 하는 실수",
-                        "피부과 의사가 알려준 방법",
-                        "{product} 제대로 쓰는 법",
-                        "화장품 성분 보는 법",
-                        "{pain} 원인부터 알아야",
-                        "피부 타입별 케어 방법",
-                        "이거 모르고 바르면 소용없음",
-                        "루틴 순서가 중요한 이유",
-                        "{product} 효과 제대로 보려면",
-                        "아침/저녁 루틴 차이",
-                        "민감성 피부 주의사항",
-                        "{pain} 악화시키는 습관",
-                        "기초 케어 단계별 정리",
-                        "성분 겹치면 안 되는 이유",
-                        "{target} 맞춤 루틴",
-                        "계절별 스킨케어 차이",
-                        "피부 장벽 회복하는 법",
-                        "{product} 사용 주기",
-                        "효과 보는 기간 얼마나"
-                    ],
-                    bodies: [
-                        "\n\n{pain}{이/가} 생기는 이유\n대부분 케어 방법이 잘못됨\n\n{product} 제대로 쓰면\n{solution}\n\n피부과 의사 조언 참고함\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain}{을/를} 방치함\n\n{product}{으/로} 케어하면\n{solution} 가능\n\n루틴 정리 필요\n\n",
-                        "\n\n{product} 효과 보려면\n사용 순서가 중요\n\n1. 클렌징\n2. {product} 흡수\n3. 보습 마무리\n\n{solution} 극대화\n\n",
-                        "\n\n{pain} 원인\n\n피부 장벽 손상\n잘못된 루틴\n수분 부족\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n피부과 의사가 알려준 건데\n{pain}{은/는}\n기초 케어가 핵심\n\n{product} 쓰니까\n{solution} 확실\n\n",
-                        "\n\n화장품 성분 보는 법\n\n{pain} 케어 성분 확인\n자극 성분 피하기\n\n{product}{은/는}\n{solution} 도와줌\n\n",
-                        "\n\n{target} 맞춤 루틴\n\n아침: 가볍게\n저녁: {product} 집중\n\n{pain} 케어하면서\n{solution}\n\n",
-                        "\n\n이거 모르고 쓰면 소용없음\n\n{product}{은/는}\n흡수 시간 필요\n\n바르고 3분 대기\n{solution} 효과 높아짐\n\n",
-                        "\n\n민감성 피부 주의\n\n{pain} 있을 때\n자극 성분 피해야 함\n\n{product}{은/는}\n{solution} 저자극\n\n",
-                        "\n\n{pain} 악화시키는 습관\n\n과도한 클렌징\n루틴 너무 많음\n수분 부족\n\n{product}{으/로}\n{solution} 개선\n\n",
-                        "\n\n계절별 차이\n\n여름: 가볍게\n겨울: {product} 집중\n\n{pain} 케어하면서\n{solution}\n\n",
-                        "\n\n기초 케어 단계 정리\n\n1단계: 클렌징\n2단계: {product}\n3단계: 보습\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n피부 장벽 회복법\n\n{pain} 있을 때\n단순하게 가야 함\n\n{product} + 보습\n{solution} 확실\n\n",
-                        "\n\n{product} 사용 주기\n\n처음: 이틀에 한 번\n적응 후: 매일\n\n{pain} 케어하면서\n{solution}\n\n",
-                        "\n\n효과 보는 기간\n\n2주: {pain} 줄어듦\n4주: {solution} 느껴짐\n\n꾸준히 쓰는 게 중요\n\n",
-                        "\n\n{target}한테 맞는 루틴\n\n{pain} 케어 우선\n{product} 집중\n\n{solution}\n단계별로 진행\n\n",
-                        "\n\n성분 겹치면 안 되는 이유\n\n자극 생길 수 있음\n{pain} 악화 위험\n\n{product} 단독 사용\n{solution} 안전\n\n",
-                        "\n\n루틴 순서 중요한 이유\n\n흡수율 차이 남\n{pain} 케어 효과 달라짐\n\n{product} 제대로 쓰면\n{solution}\n\n",
-                        "\n\n아침/저녁 루틴 차이\n\n아침: 보호 중심\n저녁: {product} 집중\n\n{pain} 케어하면서\n{solution}\n\n",
-                        "\n\n{pain} 원인부터 파악\n\n환경/습관/제품\n다 체크해야 함\n\n{product}{으/로}\n{solution} 시작\n\n"
-                    ],
-                    closings: [
-                        "루틴 더 궁금하면 댓글",
-                        "피부 타입별 추천 DM",
-                        "성분 정보 프로필에",
-                        "사용법 댓글로 공유",
-                        "도움됐으면 저장",
-                        "다음편에 상세 설명",
-                        "궁금한 점 댓글로",
-                        "프로필에 더 많은 정보",
-                        "시리즈로 계속 올림",
-                        "질문 언제든 환영"
-                    ]
-                },
-                sales: {
-                    hooks: [
-                        "{product} 쓰는 사람들 후기",
-                        "내가 쓴 {product} 솔직 리뷰",
-                        "{pain}{이/가} 나아진 이유",
-                        "재구매 4번째",
-                        "돈 아깝지 않은 제품",
-                        "{target}한테 추천하는 이유",
-                        "비싸도 살 만한 가치",
-                        "가성비 따지면 이거",
-                        "{product}{으/로} 바꾼 후",
-                        "이거 쓰고 {pain} 줄었음",
-                        "주변에서 다 쓰길래",
-                        "반신반의했는데",
-                        "{product} 2달 써본 결과",
-                        "프로필에 구매처 있음",
-                        "이거 아직도 안 써봤어",
-                        "다른 거 쓰다가 이걸로",
-                        "{pain} 때문에 찾아봤는데",
-                        "가격 대비 만족도",
-                        "{target}이 많이 찾는 이유",
-                        "내 돈 주고 산 솔직 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 써보니\n{pain} 확실히 나아짐\n\n{solution} 느껴지고\n가격 생각하면 괜찮음\n\n",
-                        "\n\n처음엔 비싸다 싶었는데\n{pain}{이/가} 줄어드니까\n결과적으로 이득\n\n{solution} 되는 거 보고\n재구매 결정\n\n",
-                        "\n\n{target}이 많이 쓰는 이유\n알겠더라\n\n{product}{으/로} 바꾸니까\n{solution}\n\n{pain} 고민 덜함\n\n",
-                        "\n\n2달 써본 솔직 후기\n\n장점: {solution}\n{pain} 확실히 개선됨\n\n단점: 가격이 좀 있음\n그래도 재구매함\n\n",
-                        "\n\n프로필에 내가 쓴 거 링크\n\n{product}{이/가}\n{pain} 해결해줌\n\n{solution} 느껴짐\n\n",
-                        "\n\n{pain} 고민하다가\n{product} 써봤는데\n\n{solution} 되는 거 보고\n주변에 추천함\n\n가격은 있지만 효과 있음\n\n",
-                        "\n\n반신반의하고 샀는데\n생각보다 괜찮음\n\n{product}{으/로}\n{solution}\n\n{pain}{은/는} 줄어듦\n\n",
-                        "\n\n다른 {target} 후기 보고\n나도 사봤는데\n\n{pain}{이/가} 나아짐\n{solution} 확실함\n\n재구매 의향 있음\n\n",
-                        "\n\n{product} 쓴 지 3주\n\n{pain} 많이 줄었고\n{solution} 느껴짐\n\n가성비 따지면 나쁘지 않음\n\n",
-                        "\n\n처음엔 의심했는데\n{target} 후기 많길래 시도\n\n{product}{으/로}\n{pain} 해결됨\n\n{solution} 생각하면 만족\n\n",
-                        "\n\n내 돈 주고 산 후기\n\n{product}{이/가}\n{pain}{을/를} 케어해줌\n\n{solution}\n가격값 함\n\n",
-                        "\n\n{target}이 많이 쓰는 거\n이유 있더라\n\n{pain} 고민 줄고\n{solution}\n\n프로필에 구매처\n\n",
-                        "\n\n비싸다고 생각했는데\n{pain} 나아지니까\n결과적으로 이득\n\n{product}{으/로}\n{solution} 가능\n\n",
-                        "\n\n{product} 2달 사용 후기\n\n{pain} 확실히 개선\n{solution} 느껴짐\n\n재구매 예정\n\n",
-                        "\n\n주변 추천 받고 써봤는데\n{pain}{이/가} 줄어듦\n\n{product}{으/로}\n{solution}\n\n만족함\n\n",
-                        "\n\n{pain} 때문에 고민하다가\n{product} 시도\n\n{solution} 되는 거 보고\n계속 씀\n\n프로필에 링크 있음\n\n",
-                        "\n\n다른 거 쓰다가\n{product}{으/로} 바꿈\n\n{pain} 나아지고\n{solution}\n\n괜찮은 선택이었음\n\n",
-                        "\n\n{target} 후기 많길래\n나도 써봤는데\n\n{product}{이/가}\n{pain}{을/를} 케어\n\n{solution} 만족\n\n",
-                        "\n\n가격 대비 효과\n\n{pain} 줄어듦\n{solution} 확실\n\n{product} 추천\n\n",
-                        "\n\n솔직히 비싸긴 한데\n{pain}{이/가} 나아지니까\n\n{product}{으/로}\n{solution}\n\n재구매함\n\n"
-                    ],
-                    closings: [
-                        "프로필에 구매처",
-                        "링크 있음",
-                        "내가 쓴 거 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 봐",
-                        "궁금하면 프로필 확인",
-                        "써본 사람들 후기 많음",
-                        "재구매 의향 있으면 저장",
-                        "가격 비교해보고 결정",
-                        "프로필 타고 들어가면 있음",
-                        "내 돈 주고 산 거라 솔직함",
-                        "추천 받고 싶으면 DM",
-                        "후기 더 궁금하면 댓글",
-                        "성분 정보도 프로필에"
-                    ]
-                }
-            },
-
-            // 맛집·카페 템플릿
-            food: {
-                viral: {
-                    hooks: [
-                        "여기 진짜 맛있던데",
-                        "{target} 맛집 찾았음",
-                        "웨이팅 2시간 기다린 이유",
-                        "{pain}{이/가} 없는 집",
-                        "{product} 맛집 인정",
-                        "재방문 3번째",
-                        "이 집 알려주고 싶지 않았는데",
-                        "줄 서서 먹을 만함",
-                        "{product} 맛집 여기",
-                        "친구 추천 받고 가봤는데",
-                        "여기 모르면 손해",
-                        "맛집 찾는 사람 봐",
-                        "인생 맛집 추가됨",
-                        "{target}이면 꼭 가봐",
-                        "위치 프로필에",
-                        "{pain} 없이 먹을 수 있는 집",
-                        "주변 사람들 다 아는 곳",
-                        "예약 필수인 이유",
-                        "{product} 제대로 하는 집",
-                        "여기 다녀온 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 먹으러 갔는데\n{pain} 없이 먹을 수 있음\n\n{solution}\n재방문 예정\n\n",
-                        "\n\n{target} 맛집 찾는 사람\n여기 가봐\n\n{pain}{이/가} 없고\n{solution}\n\n위치 프로필에\n\n",
-                        "\n\n웨이팅 2시간 기다렸는데\n안 기다린 걸 후회할 뻔\n\n{product}{이/가}\n{solution}\n\n{pain} 없음\n\n",
-                        "\n\n이 집 알려주기 아까웠는데\n너무 좋아서 공유\n\n{product} 맛집\n{solution} 확실\n\n{pain}{은/는} 없음\n\n",
-                        "\n\n재방문 3번째\n\n{pain} 없이\n{product} 먹을 수 있음\n\n{solution}\n단골 됨\n\n",
-                        "\n\n{target}이 많이 가는 이유\n알겠더라\n\n{pain}{이/가} 없고\n{solution}\n\n위치 저장해둬\n\n",
-                        "\n\n줄 서서 먹을 만한 집\n\n{product}{이/가}\n{solution}\n\n{pain} 전혀 없음\n\n",
-                        "\n\n친구 추천 받고 갔는데\n진짜 맛있음\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n\n",
-                        "\n\n맛집 맞음\n\n{pain}{이/가} 없고\n{solution}\n\n{product} 제대로 하는 집\n\n",
-                        "\n\n{target} 맛집\n여기 인정\n\n{pain} 없이 먹을 수 있고\n{solution}\n\n재방문 의향 있음\n\n",
-                        "\n\n예약 필수인 이유\n\n{product}{이/가}\n{solution}\n\n{pain} 전혀 없음\n가봐야 앎\n\n",
-                        "\n\n여기 모르면 손해\n\n{pain}{은/는} 없고\n{solution}\n\n{product} 맛집\n\n",
-                        "\n\n인생 맛집 추가\n\n{pain} 없이\n{product} 먹을 수 있음\n\n{solution}\n단골 확정\n\n",
-                        "\n\n주변에서 다 가는 집\n이유 있더라\n\n{pain}{이/가} 없고\n{solution}\n\n",
-                        "\n\n{product} 제대로 하는 집\n\n{pain} 전혀 없음\n{solution} 확실\n\n재방문 예정\n\n",
-                        "\n\n여기 다녀온 후기\n\n{pain} 없이 먹을 수 있고\n{solution}\n\n{product} 맛집 인정\n\n",
-                        "\n\n{target}이면 꼭 가봐\n\n{pain}{은/는} 없고\n{solution}\n\n위치 프로필에\n\n",
-                        "\n\n맛집 찾는 사람 여기\n\n{pain} 없음\n{product}{이/가} {solution}\n\n저장 추천\n\n",
-                        "\n\n줄 서는 이유 알겠음\n\n{pain}{이/가} 없고\n{solution}\n\n{product} 맛집\n\n",
-                        "\n\n친구들한테 추천한 집\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n재방문함\n\n"
-                    ],
-                    closings: [
-                        "위치 프로필에",
-                        "링크 있음",
-                        "저장해둬",
-                        "가봤으면 댓글로",
-                        "예약 추천",
-                        "위치 궁금하면 DM",
-                        "주소 프로필에",
-                        "같이 갈 사람",
-                        "저장하고 나중에 가봐",
-                        "재방문 의향 있으면 저장",
-                        "프로필 타고 들어가면 위치",
-                        "댓글로 후기 공유",
-                        "예약 링크 프로필에",
-                        "가본 사람 손",
-                        "후기 더 궁금하면 댓글"
-                    ]
-                },
-                logic: {
-                    hooks: [
-                        "맛집 고르는 기준",
-                        "{product} 맛있는 집 특징",
-                        "여기가 맛있는 이유",
-                        "{pain} 없는 집 찾는 법",
-                        "재료 보면 알 수 있음",
-                        "메뉴 선택하는 법",
-                        "{product} 제대로 하는 집",
-                        "주방 보고 판단하는 법",
-                        "신선도 체크 포인트",
-                        "{pain} 피하려면",
-                        "원산지 확인하는 이유",
-                        "조리법 차이가 맛 차이",
-                        "맛집 구별하는 꿀팁",
-                        "위생 등급 보는 법",
-                        "{target} 맞춤 메뉴 고르기",
-                        "예약 시간대 추천",
-                        "가격 대비 만족도",
-                        "재방문하는 집 특징",
-                        "메뉴판 보는 법",
-                        "후기 제대로 읽는 법"
-                    ],
-                    bodies: [
-                        "\n\n맛집 고르는 기준\n\n{pain} 없는 집\n재료 신선도\n위생 상태\n\n{product}{이/가}\n{solution}\n\n",
-                        "\n\n{target}이 많이 하는 실수\n\n{pain} 체크 안 함\n후기만 믿음\n\n{product} 제대로 하는 집\n{solution} 확실\n\n",
-                        "\n\n여기가 맛있는 이유\n\n재료 당일 수급\n{pain} 관리 철저\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n메뉴 고르는 법\n\n시그니처 메뉴 확인\n{pain} 여부 체크\n\n{product} 추천\n{solution}\n\n",
-                        "\n\n신선도 체크 포인트\n\n재료 상태\n조리 시간\n\n{pain} 없으면\n{solution} 보장\n\n",
-                        "\n\n{pain} 없는 집 찾는 법\n\n위생 등급 확인\n후기 꼼꼼히 읽기\n\n{product} 맛집은\n{solution}\n\n",
-                        "\n\n조리법 차이\n\n재료 손질부터 다름\n{pain} 관리 철저\n\n{product}{이/가}\n{solution}\n\n",
-                        "\n\n재방문하는 집 특징\n\n{pain} 없음\n맛 일정함\n\n{product} 제대로 하면\n{solution}\n\n",
-                        "\n\n예약 시간대 팁\n\n피크 타임 피하기\n{pain} 적은 시간\n\n{product} 즐기려면\n{solution}\n\n",
-                        "\n\n원산지 확인하는 이유\n\n재료 품질 차이 남\n{pain} 발생 여부\n\n{product}{은/는}\n{solution}\n\n",
-                        "\n\n맛집 구별 꿀팁\n\n주방 청결도\n재료 보관 상태\n\n{pain} 없으면\n{solution} 보장\n\n",
-                        "\n\n{target} 맞춤 메뉴\n\n{pain} 피하기\n영양 밸런스\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n후기 제대로 읽는 법\n\n{pain} 언급 체크\n재방문 여부 확인\n\n{product} 맛집은\n{solution}\n\n",
-                        "\n\n가격 대비 만족도\n\n{pain} 없고\n맛 좋으면 가성비 굿\n\n{product}{이/가}\n{solution}\n\n",
-                        "\n\n메뉴판 보는 법\n\n시그니처 확인\n{pain} 관련 메뉴 체크\n\n{product} 추천\n{solution}\n\n",
-                        "\n\n주방 보고 판단\n\n청결 상태\n재료 신선도\n\n{pain} 없으면\n{solution} 확실\n\n",
-                        "\n\n{product} 제대로 하는 집\n\n재료부터 다름\n{pain} 관리 철저\n\n{solution}\n재방문 이유\n\n",
-                        "\n\n위생 등급 중요한 이유\n\n{pain} 예방\n안전한 식사\n\n{product} 맛집은\n{solution}\n\n",
-                        "\n\n재료 보면 알 수 있음\n\n신선도 차이\n{pain} 여부\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n맛집 특징 정리\n\n{pain} 없음\n재료 좋음\n위생 철저\n\n{solution} 보장\n\n"
-                    ],
-                    closings: [
-                        "메뉴 더 궁금하면 댓글",
-                        "위치 프로필에",
-                        "예약 정보 DM",
-                        "후기 댓글로 공유",
-                        "도움됐으면 저장",
-                        "다음편에 다른 메뉴",
-                        "궁금한 점 댓글로",
-                        "프로필에 더 많은 맛집",
-                        "시리즈로 계속 올림",
-                        "질문 언제든 환영"
-                    ]
-                },
-                sales: {
-                    hooks: [
-                        "여기 다녀온 사람들 후기",
-                        "내가 간 {product} 맛집",
-                        "재방문 4번째 이유",
-                        "{pain} 없는 집 찾았음",
-                        "돈 아깝지 않은 맛집",
-                        "{target}한테 추천하는 집",
-                        "가격 대비 만족도",
-                        "예약하고 갔던 곳",
-                        "{product} 맛집 여기",
-                        "줄 서서 먹은 이유",
-                        "친구들 데려간 집",
-                        "반신반의하고 갔는데",
-                        "3번째 방문 후기",
-                        "프로필에 위치 있음",
-                        "이 집 아직도 안 가봤어",
-                        "다른 집 가다가 여기로",
-                        "{pain} 때문에 찾았는데",
-                        "가격 생각하면 괜찮음",
-                        "{target}이 많이 가는 이유",
-                        "내 돈 주고 간 솔직 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 먹으러 갔는데\n{pain} 없이 즐김\n\n{solution}\n가격 생각하면 괜찮음\n\n",
-                        "\n\n처음엔 비싸다 싶었는데\n맛 보고 납득함\n\n{pain}{이/가} 없고\n{solution}\n\n재방문 결정\n\n",
-                        "\n\n{target}이 많이 가는 이유\n알겠더라\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n\n",
-                        "\n\n3번째 방문 후기\n\n{pain} 없고\n{solution} 확실\n\n재방문 예정\n\n",
-                        "\n\n프로필에 위치 링크\n\n{pain}{이/가} 없는 집\n{product}{이/가} {solution}\n\n예약 추천\n\n",
-                        "\n\n{pain} 없는 집 찾다가\n여기 발견\n\n{solution} 되는 거 보고\n재방문함\n\n가격은 있지만 만족\n\n",
-                        "\n\n반신반의하고 갔는데\n생각보다 좋음\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n\n",
-                        "\n\n다른 {target} 후기 보고\n나도 가봤는데\n\n{pain}{이/가} 없고\n{solution}\n\n재방문 의향 있음\n\n",
-                        "\n\n줄 서서 먹은 이유\n\n{pain} 없고\n{solution}\n\n{product} 맛집 맞음\n\n",
-                        "\n\n친구들 데려간 집\n\n{pain}{은/는} 없고\n{solution}\n\n다들 만족함\n\n",
-                        "\n\n내 돈 주고 간 후기\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n가격값 함\n\n",
-                        "\n\n{target}이 많이 가는 거\n이유 있더라\n\n{pain} 없고\n{solution}\n\n위치 프로필에\n\n",
-                        "\n\n비싸다고 생각했는데\n맛 보고 이해함\n\n{pain}{이/가} 없고\n{solution}\n\n재방문함\n\n",
-                        "\n\n4번째 방문 후기\n\n{pain} 없음\n{solution} 확실\n\n예약 추천\n\n",
-                        "\n\n친구 추천 받고 갔는데\n맛있음\n\n{pain} 없이\n{product} 즐김\n\n{solution}\n\n",
-                        "\n\n{pain} 없는 집 찾다가\n여기 발견\n\n{solution} 되는 거 보고\n단골됨\n\n위치 프로필에\n\n",
-                        "\n\n다른 집 가다가\n여기로 바꿈\n\n{pain} 없고\n{solution}\n\n괜찮은 선택\n\n",
-                        "\n\n{target} 후기 많길래\n나도 가봤는데\n\n{pain}{이/가} 없음\n{solution}\n\n만족\n\n",
-                        "\n\n가격 대비 만족도\n\n{pain} 없고\n{solution}\n\n{product} 맛집 추천\n\n",
-                        "\n\n솔직히 비싸긴 한데\n맛 있으니까\n\n{pain}{이/가} 없고\n{solution}\n\n재방문함\n\n"
-                    ],
-                    closings: [
-                        "위치 프로필에",
-                        "예약 링크 있음",
-                        "주소 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 가봐",
-                        "궁금하면 프로필 확인",
-                        "다녀온 사람들 후기 많음",
-                        "재방문 의향 있으면 저장",
-                        "예약 추천함",
-                        "프로필 타고 들어가면 위치",
-                        "내 돈 주고 간 거라 솔직함",
-                        "추천 받고 싶으면 DM",
-                        "후기 더 궁금하면 댓글",
-                        "메뉴 정보도 프로필에"
-                    ]
-                }
-            },
-
-            // 지식·교육 템플릿
-            education: {
-                viral: {
-                    hooks: [
-                        "{pain}{은/는} 사람 손",
-                        "{product} 3개월 한 결과",
-                        "학원 안 다니고 독학으로",
-                        "이거 모르고 공부하는 사람 많던데",
-                        "{target}이 많이 하는 실수",
-                        "공부 효율 3배 올린 방법",
-                        "진작 이렇게 할 걸",
-                        "{pain}{이/가} 해결된 이유",
-                        "시간 반으로 줄이는 법",
-                        "이렇게 하니까 성적 올랐음",
-                        "{product} 독학 후기",
-                        "공부법 바꾼 후",
-                        "속는 셈 치고 해봤는데",
-                        "{target} 필수 루틴",
-                        "3일 해보고 확신함",
-                        "누가 알려준 방법인데",
-                        "{pain} 때문에 찾아봤는데",
-                        "공부 잘하는 애들 보니까",
-                        "이거 하나 바꿨더니",
-                        "독학으로 성공한 방법"
-                    ],
-                    bodies: [
-                        "\n\n{product} 독학 3개월\n{pain} 확실히 나아짐\n\n{solution}\n성적 올랐음\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain}{을/를} 방치함\n\n{product} 제대로 하니까\n{solution}\n\n",
-                        "\n\n학원 안 다니고 독학\n{product}{으/로} 공부\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n공부법 바꾼 후\n{pain}{이/가} 나아짐\n\n{product} 쓰니까\n{solution}\n\n효율 올랐음\n\n",
-                        "\n\n이거 모르고 공부하면\n시간 낭비함\n\n{product}{으/로}\n{pain} 해결하고\n{solution}\n\n",
-                        "\n\n3개월 해본 결과\n\n{pain} 줄고\n{solution} 확실\n\n{product} 추천\n\n",
-                        "\n\n공부 효율 3배 올린 법\n\n{pain}{을/를} 케어하고\n{product} 활용\n\n{solution}\n\n",
-                        "\n\n{target} 필수 루틴\n\n{pain} 줄이고\n{product}{으/로} 공부\n\n{solution} 느껴짐\n\n",
-                        "\n\n시간 반으로 줄인 방법\n\n{product} 제대로 쓰기\n{pain} 최소화\n\n{solution}\n\n",
-                        "\n\n속는 셈 치고 해봤는데\n{pain}{이/가} 나아짐\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n공부 잘하는 애들 보니까\n{pain} 관리 철저함\n\n{product} 쓰니까\n{solution}\n\n",
-                        "\n\n진작 이렇게 할 걸\n{pain} 줄고\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n독학으로 성공한 방법\n\n{pain} 최소화\n{product} 활용\n\n{solution} 확실\n\n",
-                        "\n\n3일 해보고 확신함\n{pain}{이/가} 줄어듦\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n이거 하나 바꿨더니\n{pain} 나아지고\n\n{product} 효과\n{solution}\n\n",
-                        "\n\n{pain} 때문에 찾아봤는데\n{product}{이/가} 답\n\n{solution}\n성적 올랐음\n\n",
-                        "\n\n{target}한테 추천하는 이유\n\n{pain} 케어되고\n{solution}\n\n{product} 효과 좋음\n\n",
-                        "\n\n학원 안 가고 독학\n{product} 쓰니까\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n공부법 정리한 결과\n{pain}{은/는} 줄고\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n누가 알려준 방법\n{pain} 해결되고\n\n{product} 활용해서\n{solution}\n\n"
-                    ],
-                    closings: [
-                        "프로필에 자료",
-                        "링크 있음",
-                        "저장해두고 써봐",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 공유",
-                        "궁금하면 프로필",
-                        "도움됐으면 저장",
-                        "후기 댓글로",
-                        "프로필 타고 들어가면",
-                        "질문 언제든",
-                        "자료 더 궁금하면 DM",
-                        "써본 사람 손",
-                        "방법 더 알고 싶으면 댓글",
-                        "저장 추천",
-                        "프로필에 더 많은 정보"
-                    ]
-                },
-                logic: {
-                    hooks: [
-                        "{pain}{이/가} 생기는 이유",
-                        "{target}이 많이 하는 실수",
-                        "{product} 제대로 하는 법",
-                        "공부 효율 올리는 순서",
-                        "이거 모르고 하면 소용없음",
-                        "{pain} 원인부터 알아야",
-                        "학습 단계별 정리",
-                        "시간 관리하는 법",
-                        "{product} 효과 제대로 보려면",
-                        "독학 vs 학원 차이",
-                        "{pain} 악화시키는 습관",
-                        "성적 올리는 루틴",
-                        "복습 주기 정하는 법",
-                        "이해 vs 암기 차이",
-                        "{target} 맞춤 공부법",
-                        "집중력 유지하는 법",
-                        "효율적인 노트 정리",
-                        "시험 전략 세우는 법",
-                        "{product} 활용 팁",
-                        "성과 나는 기간"
-                    ],
-                    bodies: [
-                        "\n\n{pain}{이/가} 생기는 이유\n대부분 방법이 잘못됨\n\n{product} 제대로 하면\n{solution}\n\n단계별로 진행\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain}{을/를} 방치\n\n{product}{으/로} 공부하면\n{solution} 가능\n\n루틴 정리 필요\n\n",
-                        "\n\n{product} 효과 보려면\n순서가 중요\n\n1. 개념 이해\n2. {product} 적용\n3. 복습 반복\n\n{solution}\n\n",
-                        "\n\n{pain} 원인\n\n잘못된 순서\n반복 부족\n피드백 없음\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n공부 효율 올리는 법\n{pain}{을/를} 최소화\n\n{product} 활용하고\n{solution}\n\n시간 관리 중요\n\n",
-                        "\n\n이거 모르고 하면 소용없음\n\n{product}{은/는}\n복습 주기 맞춰야 함\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n{target} 맞춤 공부법\n\n{pain} 줄이기\n{product} 집중\n\n{solution}\n단계별 진행\n\n",
-                        "\n\n독학 vs 학원 차이\n\n독학: {product} 자기주도\n학원: 관리받음\n\n{pain} 케어하면\n{solution}\n\n",
-                        "\n\n{pain} 악화시키는 습관\n\n벼락치기\n복습 안 함\n개념 건너뛰기\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n성적 올리는 루틴\n\n1. {product} 학습\n2. 복습 주기\n3. 피드백\n\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n복습 주기 정하는 법\n\n1일 후, 3일 후, 7일 후\n{pain} 최소화\n\n{product} 쓰면\n{solution}\n\n",
-                        "\n\n이해 vs 암기 차이\n\n이해 우선\n암기는 나중\n\n{product}{으/로}\n{pain} 줄고\n{solution}\n\n",
-                        "\n\n집중력 유지하는 법\n\n{pain} 관리\n휴식 시간 확보\n\n{product} 활용해서\n{solution}\n\n",
-                        "\n\n효율적인 노트 정리\n\n핵심만 정리\n{pain} 최소화\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n시험 전략 세우는 법\n\n약점 파악\n{pain} 보완\n\n{product} 집중\n{solution}\n\n",
-                        "\n\n{product} 활용 팁\n\n꾸준히 하기\n{pain} 관리\n\n{solution}\n효과 확실\n\n",
-                        "\n\n학습 단계별 정리\n\n기초 → 심화 → 응용\n{pain} 줄이면서\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n시간 관리하는 법\n\n우선순위 정하기\n{pain} 최소화\n\n{product} 활용\n{solution}\n\n",
-                        "\n\n성과 나는 기간\n\n1주: {pain} 줄어듦\n1달: {solution} 느껴짐\n\n꾸준히 하는 게 중요\n\n",
-                        "\n\n{pain} 원인부터 파악\n\n학습법/환경/습관\n다 체크해야 함\n\n{product}{으/로}\n{solution}\n\n"
-                    ],
-                    closings: [
-                        "자료 더 궁금하면 댓글",
-                        "방법 프로필에",
-                        "질문 DM",
-                        "도움됐으면 저장",
-                        "다음편에 실전",
-                        "궁금한 점 댓글로",
-                        "프로필에 더 많은 정보",
-                        "멘토링 필요하면 DM",
-                        "유익했으면 공유",
-                        "무료 자료 프로필에"
-                    ]
-                },
-                sales: {
-                    hooks: [
-                        "{product} 수강생들 후기",
-                        "내가 들은 {product} 강의",
-                        "3개월 듣고 성적 올랐음",
-                        "{pain}{이/가} 해결된 이유",
-                        "돈 아깝지 않은 강의",
-                        "{target}한테 추천하는 이유",
-                        "비싸도 들을 만한 가치",
-                        "가성비 따지면 이거",
-                        "{product} 들은 후",
-                        "이거 듣고 {pain} 줄었음",
-                        "주변에서 다 듣길래",
-                        "반신반의하고 들었는데",
-                        "{product} 완강 후기",
-                        "프로필에 강의 링크",
-                        "이거 아직도 안 들어봤어",
-                        "다른 강의 듣다가 이걸로",
-                        "{pain} 때문에 찾았는데",
-                        "가격 대비 만족도",
-                        "{target}이 많이 듣는 이유",
-                        "내 돈 주고 들은 솔직 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 들어보니\n{pain} 확실히 나아짐\n\n{solution} 느껴지고\n가격 생각하면 괜찮음\n\n",
-                        "\n\n처음엔 비싸다 싶었는데\n{pain}{이/가} 줄어드니까\n결과적으로 이득\n\n{solution} 되는 거 보고\n재수강 고민 중\n\n",
-                        "\n\n{target}이 많이 듣는 이유\n알겠더라\n\n{product}{으/로} 공부하니까\n{solution}\n\n{pain} 고민 덜함\n\n",
-                        "\n\n3개월 완강 후기\n\n{pain} 확실히 개선됨\n{solution} 느껴짐\n\n재수강 의향 있음\n\n",
-                        "\n\n프로필에 내가 들은 거 링크\n\n{product}{이/가}\n{pain} 해결해줌\n\n{solution} 느껴짐\n\n",
-                        "\n\n{pain} 고민하다가\n{product} 들었는데\n\n{solution} 되는 거 보고\n주변에 추천함\n\n가격은 있지만 효과 있음\n\n",
-                        "\n\n반신반의하고 들었는데\n생각보다 괜찮음\n\n{product}{으/로}\n{solution}\n\n{pain}{은/는} 줄어듦\n\n",
-                        "\n\n다른 {target} 후기 보고\n나도 들어봤는데\n\n{pain}{이/가} 나아짐\n{solution} 확실함\n\n재수강 의향 있음\n\n",
-                        "\n\n{product} 들은 지 2달\n\n{pain} 많이 줄었고\n{solution} 느껴짐\n\n가성비 따지면 나쁘지 않음\n\n",
-                        "\n\n처음엔 의심했는데\n{target} 후기 많길래 시도\n\n{product}{으/로}\n{pain} 해결됨\n\n{solution} 생각하면 만족\n\n",
-                        "\n\n내 돈 주고 들은 후기\n\n{product}{이/가}\n{pain}{을/를} 케어해줌\n\n{solution}\n가격값 함\n\n",
-                        "\n\n{target}이 많이 듣는 거\n이유 있더라\n\n{pain} 고민 줄고\n{solution}\n\n프로필에 강의 링크\n\n",
-                        "\n\n비싸다고 생각했는데\n{pain} 나아지니까\n결과적으로 이득\n\n{product}{으/로}\n{solution} 가능\n\n",
-                        "\n\n{product} 완강 후기\n\n{pain} 확실히 개선\n{solution} 느껴짐\n\n재수강 예정\n\n",
-                        "\n\n주변 추천 받고 들었는데\n{pain}{이/가} 줄어듦\n\n{product}{으/로}\n{solution}\n\n만족함\n\n",
-                        "\n\n{pain} 때문에 고민하다가\n{product} 시도\n\n{solution} 되는 거 보고\n계속 듣고 있음\n\n프로필에 링크 있음\n\n",
-                        "\n\n다른 강의 듣다가\n{product}{으/로} 바꿈\n\n{pain} 나아지고\n{solution}\n\n괜찮은 선택이었음\n\n",
-                        "\n\n{target} 후기 많길래\n나도 들어봤는데\n\n{product}{이/가}\n{pain}{을/를} 케어\n\n{solution} 만족\n\n",
-                        "\n\n가격 대비 효과\n\n{pain} 줄어듦\n{solution} 확실\n\n{product} 추천\n\n",
-                        "\n\n솔직히 비싸긴 한데\n{pain}{이/가} 나아지니까\n\n{product}{으/로}\n{solution}\n\n재수강함\n\n"
-                    ],
-                    closings: [
-                        "프로필에 강의 링크",
-                        "링크 있음",
-                        "내가 들은 거 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 봐",
-                        "궁금하면 프로필 확인",
-                        "들은 사람들 후기 많음",
-                        "재수강 의향 있으면 저장",
-                        "가격 비교해보고 결정",
-                        "프로필 타고 들어가면 있음",
-                        "내 돈 주고 들은 거라 솔직함",
-                        "추천 받고 싶으면 DM",
-                        "후기 더 궁금하면 댓글",
-                        "커리큘럼도 프로필에"
-                    ]
-                }
-            },
-
-            // 전문직·부동산 템플릿
-            professional: {
-                viral: {
-                    hooks: [
-                        "{pain}{은/는} 사람 손",
-                        "{product} 계약한 사람 후기",
-                        "이거 모르고 계약하면 손해",
-                        "변호사한테 들은 방법",
-                        "{target}이 많이 하는 실수",
-                        "계약 전에 꼭 확인해야 할 것",
-                        "진작 이렇게 할 걸",
-                        "{pain}{이/가} 해결된 이유",
-                        "손해 안 보는 법",
-                        "전문가 상담 받은 후",
-                        "{product} 알아본 결과",
-                        "속는 셈 치고 상담받았는데",
-                        "이거 몰랐으면 수백만 원 날릴 뻔",
-                        "{target} 필수 체크리스트",
-                        "계약서 보는 법",
-                        "누가 알려준 팁인데",
-                        "{pain} 때문에 알아봤는데",
-                        "실제 사례 보니까",
-                        "이거 하나 놓치면",
-                        "전문가 의견 들어봄"
-                    ],
-                    bodies: [
-                        "\n\n{product} 상담 받아보니\n{pain} 피할 수 있음\n\n{solution}\n손해 안 봄\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain} 체크 안 함\n\n{product} 알아보면\n{solution}\n\n",
-                        "\n\n계약 전에 확인했더니\n{pain} 피함\n\n{product}{으/로}\n{solution}\n\n손해 안 봄\n\n",
-                        "\n\n변호사한테 들은 건데\n{pain}{은/는}\n사전 확인이 중요함\n\n{product} 알아보고\n{solution}\n\n",
-                        "\n\n이거 모르고 계약하면\n{pain} 발생함\n\n{product} 체크하면\n{solution}\n\n",
-                        "\n\n전문가 상담 받은 후\n{pain} 피할 수 있었음\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n{target} 필수 체크리스트\n\n{pain} 확인하고\n{product} 검토\n\n{solution}\n\n",
-                        "\n\n계약서 보는 법\n{pain} 조항 체크\n\n{product} 확인하면\n{solution}\n\n",
-                        "\n\n실제 사례 보니까\n{pain} 놓치면 큰일남\n\n{product} 알아보고\n{solution}\n\n",
-                        "\n\n{pain} 피하는 법\n\n전문가 상담\n{product} 확인\n\n{solution}\n\n",
-                        "\n\n속는 셈 치고 상담받았는데\n{pain} 피할 수 있었음\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n진작 {product} 알아볼 걸\n{pain} 발생 안 했을 텐데\n\n{solution}\n손해 봄\n\n",
-                        "\n\n이거 하나 놓치면\n{pain} 발생\n\n{product} 체크하면\n{solution}\n\n",
-                        "\n\n{target}한테 추천하는 이유\n\n{pain} 피할 수 있고\n{solution}\n\n{product} 중요함\n\n",
-                        "\n\n전문가 의견 들어보니까\n{pain}{은/는}\n예방 가능함\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n{pain} 때문에 알아봤는데\n{product}{이/가} 중요\n\n{solution}\n손해 안 봄\n\n",
-                        "\n\n누가 알려준 팁\n{pain} 체크하기\n\n{product} 확인하면\n{solution}\n\n",
-                        "\n\n계약 전 체크리스트\n{pain}{은/는} 필수 확인\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n이거 몰랐으면\n{pain} 발생했을 거임\n\n{product} 알아보고\n{solution}\n\n",
-                        "\n\n{target}이 많이 놓치는 거\n{pain} 확인 안 함\n\n{product} 체크하면\n{solution}\n\n"
-                    ],
-                    closings: [
-                        "프로필에 상담 링크",
-                        "링크 있음",
-                        "저장해둬",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 공유",
-                        "궁금하면 프로필",
-                        "도움됐으면 저장",
-                        "체크리스트 프로필에",
-                        "상담 받은 사람 후기 많음",
-                        "질문 언제든",
-                        "자료 더 궁금하면 DM",
-                        "계약 전에 꼭 확인",
-                        "프로필 타고 들어가면",
-                        "상담 추천",
-                        "정보 더 필요하면 댓글"
-                    ]
-                },
-                logic: {
-                    hooks: [
-                        "{pain}{이/가} 발생하는 이유",
-                        "{target}이 많이 하는 실수",
-                        "{product} 계약 시 체크사항",
-                        "손해 안 보는 방법",
-                        "이거 모르고 하면 위험",
-                        "{pain} 원인부터 알아야",
-                        "계약 단계별 정리",
-                        "법률 검토하는 법",
-                        "{product} 제대로 확인하려면",
-                        "전문가 vs 직접 차이",
-                        "{pain} 발생 시 대응법",
-                        "손해배상 받는 조건",
-                        "계약서 보는 법",
-                        "조항별 주의사항",
-                        "{target} 맞춤 가이드",
-                        "분쟁 예방하는 법",
-                        "증거 수집 방법",
-                        "법적 권리 행사 절차",
-                        "{product} 활용 팁",
-                        "해결까지 걸리는 기간"
-                    ],
-                    bodies: [
-                        "\n\n{pain}{이/가} 발생하는 이유\n대부분 확인 안 함\n\n{product} 제대로 보면\n{solution}\n\n전문가 상담 필요\n\n",
-                        "\n\n{target}이 많이 하는 실수\n{pain} 조항 못 봄\n\n{product} 확인하면\n{solution} 가능\n\n계약 전 체크\n\n",
-                        "\n\n{product} 계약 시\n체크사항 정리\n\n1. {pain} 조항\n2. 해지 조건\n3. 분쟁 해결\n\n{solution}\n\n",
-                        "\n\n{pain} 원인\n\n계약서 미확인\n조항 오해\n사전 검토 부족\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n손해 안 보는 방법\n{pain}{을/를} 사전 체크\n\n{product} 확인하고\n{solution}\n\n전문가 조언 참고\n\n",
-                        "\n\n이거 모르고 하면 위험\n\n{product}{은/는}\n법률 검토 필요\n\n{pain} 예방하고\n{solution}\n\n",
-                        "\n\n{target} 맞춤 가이드\n\n{pain} 피하기\n{product} 검토\n\n{solution}\n단계별 진행\n\n",
-                        "\n\n전문가 vs 직접\n\n전문가: 법률 검토\n직접: 비용 절감\n\n{pain} 예방하려면\n{solution}\n\n",
-                        "\n\n{pain} 발생 시 대응법\n\n증거 수집\n전문가 상담\n법적 조치\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n손해배상 받는 조건\n\n{pain} 입증\n인과관계 증명\n\n{product} 확인하면\n{solution}\n\n",
-                        "\n\n계약서 보는 법\n\n{pain} 조항 확인\n불리한 조건 체크\n\n{product} 검토\n{solution}\n\n",
-                        "\n\n조항별 주의사항\n\n{pain} 관련 조항\n해지 조건\n분쟁 해결\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n분쟁 예방하는 법\n\n계약서 꼼꼼히\n{pain} 사전 체크\n\n{product} 확인\n{solution}\n\n",
-                        "\n\n증거 수집 방법\n\n서면 기록\n녹취/녹화\n\n{pain} 발생 시\n{solution} 가능\n\n",
-                        "\n\n법적 권리 행사 절차\n\n{pain} 확인\n전문가 상담\n법적 조치\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n{product} 활용 팁\n\n꼼꼼히 검토\n{pain} 체크\n\n{solution}\n효과 확실\n\n",
-                        "\n\n계약 단계별 정리\n\n검토 → 협상 → 체결\n{pain} 확인하면서\n\n{product}{으/로}\n{solution}\n\n",
-                        "\n\n법률 검토하는 법\n\n전문가 의뢰\n{pain} 조항 체크\n\n{product} 확인\n{solution}\n\n",
-                        "\n\n해결까지 걸리는 기간\n\n사안마다 다름\n{pain} 정도에 따라\n\n전문가 상담 추천\n\n",
-                        "\n\n{pain} 원인부터 파악\n\n계약/조항/절차\n다 체크해야 함\n\n{product}{으/로}\n{solution}\n\n"
-                    ],
-                    closings: [
-                        "자료 더 궁금하면 댓글",
-                        "법률 정보 프로필에",
-                        "상담 필요하면 DM",
-                        "도움됐으면 저장",
-                        "다음편에 사례",
-                        "궁금한 점 댓글로",
-                        "프로필에 더 많은 정보",
-                        "개별 상담 DM",
-                        "유익했으면 공유",
-                        "체크리스트 프로필에"
-                    ]
-                },
-                sales: {
-                    hooks: [
-                        "{product} 상담받은 사람들 후기",
-                        "내가 상담받은 경험",
-                        "{pain}{이/가} 해결된 이유",
-                        "상담 받고 계약함",
-                        "돈 아깝지 않은 서비스",
-                        "{target}한테 추천하는 이유",
-                        "비싸도 상담받을 만한 가치",
-                        "전문가 상담 후기",
-                        "{product} 계약한 후",
-                        "이거 상담받고 {pain} 피함",
-                        "주변에서 다 받길래",
-                        "반신반의하고 상담받았는데",
-                        "{product} 상담 후기",
-                        "프로필에 상담 링크",
-                        "이거 아직도 안 알아봤어",
-                        "다른 곳 알아보다가 여기로",
-                        "{pain} 때문에 찾았는데",
-                        "비용 대비 만족도",
-                        "{target}이 많이 찾는 이유",
-                        "내 돈 주고 상담받은 솔직 후기"
-                    ],
-                    bodies: [
-                        "\n\n{product} 상담받아보니\n{pain} 피할 수 있음\n\n{solution} 확실하고\n비용 생각하면 괜찮음\n\n",
-                        "\n\n처음엔 비싸다 싶었는데\n{pain} 예방하니까\n결과적으로 이득\n\n{solution} 되는 거 보고\n계약 결정\n\n",
-                        "\n\n{target}이 많이 찾는 이유\n알겠더라\n\n{product} 상담받으니까\n{solution}\n\n{pain} 고민 덜함\n\n",
-                        "\n\n상담 받은 후기\n\n{pain} 확실히 예방됨\n{solution} 느껴짐\n\n만족함\n\n",
-                        "\n\n프로필에 내가 상담받은 곳 링크\n\n{product}{이/가}\n{pain} 해결해줌\n\n{solution} 느껴짐\n\n",
-                        "\n\n{pain} 고민하다가\n{product} 상담받았는데\n\n{solution} 되는 거 보고\n주변에 추천함\n\n비용은 있지만 효과 있음\n\n",
-                        "\n\n반신반의하고 상담받았는데\n생각보다 괜찮음\n\n{product}{으/로}\n{solution}\n\n{pain}{은/는} 피함\n\n",
-                        "\n\n다른 {target} 후기 보고\n나도 상담받아봤는데\n\n{pain} 예방됨\n{solution} 확실함\n\n재계약 의향 있음\n\n",
-                        "\n\n{product} 상담 후\n\n{pain} 많이 예방되고\n{solution} 느껴짐\n\n비용 대비 나쁘지 않음\n\n",
-                        "\n\n처음엔 의심했는데\n{target} 후기 많길래 시도\n\n{product}{으/로}\n{pain} 해결됨\n\n{solution} 생각하면 만족\n\n",
-                        "\n\n내 돈 주고 상담받은 후기\n\n{product}{이/가}\n{pain}{을/를} 케어해줌\n\n{solution}\n비용값 함\n\n",
-                        "\n\n{target}이 많이 찾는 거\n이유 있더라\n\n{pain} 고민 줄고\n{solution}\n\n프로필에 상담처\n\n",
-                        "\n\n비싸다고 생각했는데\n{pain} 예방하니까\n결과적으로 이득\n\n{product}{으/로}\n{solution} 가능\n\n",
-                        "\n\n{product} 상담 후기\n\n{pain} 확실히 예방\n{solution} 느껴짐\n\n재상담 예정\n\n",
-                        "\n\n주변 추천 받고 상담받았는데\n{pain} 피할 수 있었음\n\n{product}{으/로}\n{solution}\n\n만족함\n\n",
-                        "\n\n{pain} 때문에 고민하다가\n{product} 시도\n\n{solution} 되는 거 보고\n계속 이용 중\n\n프로필에 링크 있음\n\n",
-                        "\n\n다른 곳 알아보다가\n{product}{으/로} 결정\n\n{pain} 예방되고\n{solution}\n\n괜찮은 선택이었음\n\n",
-                        "\n\n{target} 후기 많길래\n나도 상담받아봤는데\n\n{product}{이/가}\n{pain}{을/를} 케어\n\n{solution} 만족\n\n",
-                        "\n\n비용 대비 효과\n\n{pain} 예방됨\n{solution} 확실\n\n{product} 추천\n\n",
-                        "\n\n솔직히 비싸긴 한데\n{pain} 예방하니까\n\n{product}{으/로}\n{solution}\n\n재계약함\n\n"
-                    ],
-                    closings: [
-                        "프로필에 상담 링크",
-                        "링크 있음",
-                        "내가 상담받은 곳 프로필에",
-                        "DM으로 물어봐도 됨",
-                        "댓글로 후기 공유",
-                        "저장해두고 나중에 상담",
-                        "궁금하면 프로필 확인",
-                        "상담받은 사람들 후기 많음",
-                        "재상담 의향 있으면 저장",
-                        "비용 비교해보고 결정",
-                        "프로필 타고 들어가면 있음",
-                        "내 돈 주고 받은 거라 솔직함",
-                        "추천 받고 싶으면 DM",
-                        "후기 더 궁금하면 댓글",
-                        "상담 내용도 프로필에"
-                    ]
-                }
-            }
-        };
-
-        // ========================================
-        // HASHTAGS DATABASE
-        // ========================================
-
-        const HASHTAGS = {
-            common: [
-                '#릴스', '#인스타그램', '#마케팅', '#소상공인', '#홍보',
-                '#SNS마케팅', '#브랜딩', '#광고', '#바이럴', '#팁'
-            ],
-            beauty: [
-                '#뷰티', '#화장품', '#스킨케어', '#메이크업', '#뷰티템',
-                '#득템', '#뷰티인플루언서', '#코덕', '#올영', '#화장품추천'
-            ],
-            food: [
-                '#맛집', '#먹스타그램', '#푸디', '#카페', '#브런치',
-                '#디저트', '#맛집투어', '#데일리', '#오늘의식사', '#맛스타그램'
-            ],
-            education: [
-                '#공부', '#학습', '#교육', '#강의', '#자기계발',
-                '#스터디', '#온라인강의', '#독학', '#공부법', '#성장'
-            ],
-            professional: [
-                '#부동산', '#재테크', '#투자', '#전문가', '#컨설팅',
-                '#법률', '#상담', '#정보', '#팁', '#노하우'
-            ]
-        };
-
-        // ========================================
-        // STATE MANAGEMENT
-        // ========================================
-
-        let currentCategory = 'common';
-        let currentTab = 'viral';
-        let currentFormData = {};
-        let currentScripts = {};
-
-        // ========================================
-        // DOM ELEMENTS
-        // ========================================
-
-        console.log('🔍 DOM 요소 선택 시작...');
-
-        const categoryBtns = document.querySelectorAll('.category-btn');
-        const scriptForm = document.getElementById('scriptForm');
-        const loadingModal = document.getElementById('loadingModal');
-        const loadingText = document.getElementById('loadingText');
-        const progressBar = document.getElementById('progressBar');
-        const inputSection = document.getElementById('inputSection');
-        const resultsSection = document.getElementById('resultsSection');
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const resultTitle = document.getElementById('resultTitle');
-        const scriptContent = document.getElementById('scriptContent');
-        const hashtagsContainer = document.getElementById('hashtagsContainer');
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        const copyBtn = document.getElementById('copyBtn');
-
-        // Validate all required DOM elements
-        console.log('✅ DOM 요소 선택 결과:');
-        console.log('  - categoryBtns:', categoryBtns.length, '개');
-        console.log('  - scriptForm:', scriptForm ? '✓' : '✗ NULL!');
-        console.log('  - loadingModal:', loadingModal ? '✓' : '✗ NULL!');
-        console.log('  - inputSection:', inputSection ? '✓' : '✗ NULL!');
-        console.log('  - resultsSection:', resultsSection ? '✓' : '✗ NULL!');
-        console.log('  - tabBtns:', tabBtns.length, '개');
-
-        // Critical null check
-        if (!scriptForm) {
-            console.error('❌ CRITICAL: scriptForm이 null입니다!');
-            alert('오류: 폼을 찾을 수 없습니다. 페이지를 새로고침해주세요.');
-            return;
+    <style>
+        @keyframes loading-bar {
+            0% { width: 0%; left: 0; }
+            50% { width: 70%; left: 30%; }
+            100% { width: 0%; left: 100%; }
         }
-
-        // ========================================
-        // CATEGORY SELECTION
-        // ========================================
-
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                categoryBtns.forEach(b => {
-                    b.classList.remove('bg-purple-600');
-                    b.classList.add('custom-input');
-                });
-                btn.classList.remove('custom-input');
-                btn.classList.add('bg-purple-600');
-                currentCategory = btn.dataset.category;
-                console.log(`📌 카테고리 선택: ${currentCategory}`);
-            });
-        });
-
-        // Set default category
-        console.log('🏷️ 기본 카테고리 설정 중...');
-        categoryBtns[0].click();
-
-        // ========================================
-        // FORM SUBMISSION
-        // ========================================
-
-        console.log('🎯 폼 이벤트 리스너 등록 시도...');
-
-        scriptForm.addEventListener('submit', async (e) => {
-            console.log('🚨🚨🚨 폼 제출 이벤트 발생! 🚨🚨🚨');
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('✅ preventDefault() 및 stopPropagation() 실행됨');
-
-            try {
-                // Get form data
-                currentFormData = {
-                    product: document.getElementById('product').value,
-                    target: document.getElementById('target').value,
-                    pain: document.getElementById('pain').value,
-                    solution: document.getElementById('solution').value
-                };
-
-                console.log('📋 입력 데이터:', currentFormData);
-
-                // Validate form data
-                if (!currentFormData.product || !currentFormData.target ||
-                    !currentFormData.pain || !currentFormData.solution) {
-                    console.warn('⚠️ 필드 유효성 검사 실패');
-                    alert('모든 필드를 입력해주세요!');
-                    return;
-                }
-
-                console.log('✅ 유효성 검사 통과');
-
-                // Show loading modal
-                console.log('⏳ 로딩 모달 표시 시작...');
-                showLoadingAnimation();
-
-                // Wait 2.5 seconds
-                console.log('⏰ 2.5초 대기 시작...');
-                await new Promise(resolve => setTimeout(resolve, 2500));
-                console.log('⏰ 2.5초 대기 완료');
-
-                // Generate scripts for all tabs
-                console.log('🎯 대본 생성 시작...');
-                generateAllScripts();
-                console.log('✨ 대본 생성 완료!');
-
-                // Hide loading and show results
-                console.log('🔄 화면 전환 시작...');
-                loadingModal.classList.add('hidden');
-                loadingModal.classList.remove('flex');
-                inputSection.classList.add('hidden');
-                resultsSection.classList.remove('hidden');
-                console.log('✅ 화면 전환 완료');
-
-                // Display current tab
-                console.log('📊 결과 표시 시작...');
-                displayScript(currentTab);
-                console.log('🎉 모든 프로세스 완료!');
-
-            } catch (error) {
-                console.error('❌ 폼 처리 중 에러 발생:', error);
-                console.error('에러 스택:', error.stack);
-                alert('오류가 발생했습니다: ' + error.message);
-            }
-        });
-
-        console.log('✅ 폼 이벤트 리스너 등록 완료');
-
-        // TEST: Add click listener to submit button for debugging
-        const submitButton = scriptForm.querySelector('button[type="submit"]');
-        if (submitButton) {
-            console.log('🔘 제출 버튼 발견:', submitButton);
-            submitButton.addEventListener('click', (e) => {
-                console.log('🖱️ 제출 버튼 클릭됨!');
-            });
-        } else {
-            console.error('❌ 제출 버튼을 찾을 수 없습니다!');
+        .animate-loading-bar {
+            animation: loading-bar 2s infinite linear;
         }
-
-        // ========================================
-        // LOADING ANIMATION
-        // ========================================
-
-        function showLoadingAnimation() {
-            console.log('🔄 로딩 애니메이션 시작...');
-
-            // Reset progress bar (프로그레스 바 초기화)
-            progressBar.style.width = '0%';
-            progressBar.classList.remove('progress-bar');
-
-            // Force reflow to restart animation (애니메이션 재시작을 위한 reflow)
-            void progressBar.offsetWidth;
-
-            // Re-add animation class
-            progressBar.classList.add('progress-bar');
-
-            // Show modal
-            loadingModal.classList.remove('hidden');
-            loadingModal.classList.add('flex');
-
-            const messages = [
-                '업종별 톤앤매너 분석 중...',
-                '후킹 키워드 조합 중...',
-                '최적의 해시태그 매칭 중...'
-            ];
-
-            let currentMessageIndex = 0;
-            loadingText.textContent = messages[0];
-
-            const interval = setInterval(() => {
-                currentMessageIndex++;
-                if (currentMessageIndex < messages.length) {
-                    loadingText.textContent = messages[currentMessageIndex];
-                    console.log(`💬 ${messages[currentMessageIndex]}`);
-                } else {
-                    clearInterval(interval);
-                }
-            }, 800);
-        }
-
-        // ========================================
-        // KOREAN JOSA AUTO-PROCESSING (조사 자동 처리)
-        // ========================================
-
-        // 받침 판별 함수
-        function hasJongseong(word) {
-            if (!word || word.length === 0) return false;
-            const lastChar = word.charAt(word.length - 1);
-            const code = lastChar.charCodeAt(0);
-
-            // 한글 유니코드 범위 체크
-            if (code < 0xAC00 || code > 0xD7A3) {
-                // 한글이 아닌 경우 (숫자, 영어 등)
-                return /[0-9]/.test(lastChar) ? false : true;
-            }
-
-            return (code - 0xAC00) % 28 !== 0;
-        }
-
-        // 조사 선택 함수
-        function getJosa(word, josaType) {
-            const hasFinalConsonant = hasJongseong(word);
-
-            switch(josaType) {
-                case '이/가': return hasFinalConsonant ? '이' : '가';
-                case '을/를': return hasFinalConsonant ? '을' : '를';
-                case '은/는': return hasFinalConsonant ? '은' : '는';
-                case '과/와': return hasFinalConsonant ? '과' : '와';
-                case '아/야': return hasFinalConsonant ? '아' : '야';
-                case '이어/여': return hasFinalConsonant ? '이어' : '여';
-                default: return '';
-            }
-        }
-
-        // 스마트 변수 치환 함수
-        function smartReplace(text, formData) {
-            // 조사가 포함된 패턴 먼저 처리
-            text = text.replace(/\{(product|target|pain|solution)\}\{([^}]+)\}/g, (match, variable, josa) => {
-                const value = formData[variable];
-                const selectedJosa = getJosa(value, josa);
-                return value + selectedJosa;
-            });
-
-            // 일반 변수 치환
-            text = text.replace(/{product}/g, formData.product);
-            text = text.replace(/{target}/g, formData.target);
-            text = text.replace(/{pain}/g, formData.pain);
-            text = text.replace(/{solution}/g, formData.solution);
-
-            return text;
-        }
-
-        // ========================================
-        // SCRIPT GENERATION
-        // ========================================
-
-        function generateAllScripts() {
-            const types = ['viral', 'logic', 'sales'];
-            types.forEach(type => {
-                currentScripts[type] = generateScript(type);
-            });
-        }
-
-        function generateScript(type) {
-            console.log(`🎨 ${type} 타입 대본 생성 중...`);
-
-            const templates = TEMPLATES[currentCategory][type];
-
-            // Random selection from templates
-            const hook = templates.hooks[Math.floor(Math.random() * templates.hooks.length)];
-            const body = templates.bodies[Math.floor(Math.random() * templates.bodies.length)];
-            const closing = templates.closings[Math.floor(Math.random() * templates.closings.length)];
-
-            // Smart replace with Korean josa processing
-            let script = hook + body + closing;
-            script = smartReplace(script, currentFormData);
-
-            console.log(`✅ ${type} 대본 생성 완료 (${script.length}자)`);
-            return script;
-        }
-
-        // ========================================
-        // TAB SWITCHING
-        // ========================================
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => {
-                    b.classList.remove('tab-active');
-                    b.classList.add('custom-input');
-                });
-                btn.classList.remove('custom-input');
-                btn.classList.add('tab-active');
-
-                currentTab = btn.dataset.tab;
-                console.log(`🔄 탭 전환: ${currentTab}`);
-                displayScript(currentTab);
-            });
-        });
-
-        // ========================================
-        // DISPLAY SCRIPT
-        // ========================================
-
-        function displayScript(type) {
-            console.log(`📺 대본 표시: ${type} 타입`);
-
-            const titles = {
-                viral: '🔥 조회수 폭발형 대본',
-                logic: '🧠 논리 설득형 대본',
-                sales: '💰 당장 사세요형 대본'
-            };
-
-            resultTitle.textContent = titles[type];
-            scriptContent.textContent = currentScripts[type];
-
-            // Add fade-in animation
-            scriptContent.classList.remove('fade-in');
-            void scriptContent.offsetWidth; // Trigger reflow
-            scriptContent.classList.add('fade-in');
-
-            // Display hashtags
-            displayHashtags();
-            console.log(`✅ 대본 표시 완료`);
-        }
-
-        // ========================================
-        // DISPLAY HASHTAGS
-        // ========================================
-
-        function displayHashtags() {
-            console.log(`#️⃣ 해시태그 표시 중... (${currentCategory})`);
-            const hashtags = HASHTAGS[currentCategory];
-            hashtagsContainer.innerHTML = '';
-
-            hashtags.forEach(tag => {
-                const span = document.createElement('span');
-                span.className = 'bg-purple-600/30 text-purple-300 px-3 py-1 rounded-full text-sm';
-                span.textContent = tag;
-                hashtagsContainer.appendChild(span);
-            });
-            console.log(`✅ 해시태그 ${hashtags.length}개 표시 완료`);
-        }
-
-        // ========================================
-        // SHUFFLE BUTTON
-        // ========================================
-
-        shuffleBtn.addEventListener('click', () => {
-            console.log('🔀 다시 섞기 시작...');
-            currentScripts[currentTab] = generateScript(currentTab);
-            displayScript(currentTab);
-        });
-
-        // ========================================
-        // COPY BUTTON
-        // ========================================
-
-        copyBtn.addEventListener('click', async () => {
-            console.log('📋 복사 버튼 클릭됨');
-
-            const textToCopy = currentScripts[currentTab] + '\n\n' +
-                               HASHTAGS[currentCategory].join(' ');
-
-            console.log(`📝 복사할 텍스트 길이: ${textToCopy.length}자`);
-
-            try {
-                await navigator.clipboard.writeText(textToCopy);
-                console.log('✅ 클립보드에 복사 성공!');
-
-                // Confetti effect
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-                console.log('🎉 폭죽 효과 실행!');
-
-                // Button feedback
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>복사완료!✨';
-                copyBtn.classList.add('bg-green-600');
-
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('bg-green-600');
-                    console.log('🔄 복사 버튼 원래 상태로 복구');
-                }, 2000);
-
-            } catch (err) {
-                console.error('❌ 복사 실패:', err);
-                alert('복사에 실패했습니다. 다시 시도해주세요.');
-            }
-        });
-
-        console.log('✅ 모든 이벤트 리스너 등록 완료!');
-
-        }); // DOMContentLoaded 종료
-
-    </script>
-
+    </style>
 </body>
 </html>
