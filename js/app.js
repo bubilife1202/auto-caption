@@ -226,18 +226,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getJosa(word, josaType) {
+        if (!word) return '';
         const hasFinalConsonant = hasJongseong(word);
+
         switch(josaType) {
             case '이/가': return hasFinalConsonant ? '이' : '가';
             case '을/를': return hasFinalConsonant ? '을' : '를';
             case '은/는': return hasFinalConsonant ? '은' : '는';
             case '과/와': return hasFinalConsonant ? '과' : '와';
-            // '로' is special: if jongseong is 'ㄹ', it uses '로', other consonant '으로'
-            case '으로/로':
-                if (!hasFinalConsonant) return '로';
-                // Check if last char is ㄹ (Real check is hard without decomposing, assuming standard match)
-                // Simplified: treat as '으로' if consonant
-                return '으로';
+            case '아/야': return hasFinalConsonant ? '아' : '야';
+            case '이어/여': return hasFinalConsonant ? '이어' : '여';
+            case '으로/로': {
+                const lastChar = word.charAt(word.length - 1);
+                const code = lastChar.charCodeAt(0);
+                // Check if last char is 'ㄹ' (Hangul jongseong index 8)
+                const isRieul = (code >= 0xAC00 && code <= 0xD7A3) && ((code - 0xAC00) % 28 === 8);
+
+                // If no final consonant OR the final consonant is 'ㄹ', use '로'
+                // Otherwise (other consonants), use '으로'
+                return (!hasFinalConsonant || isRieul) ? '로' : '으로';
+            }
             default: return '';
         }
     }
@@ -297,28 +305,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getTemplate(frameworkType, hasMetric) {
-        // 1. Base Common Templates
-        let base = TEMPLATES['common'][frameworkType];
+        // 1. Base Common Templates (Use Spread to avoid mutation)
+        const commonTemplates = TEMPLATES['common'][frameworkType];
+
+        // Create local copies to avoid polluting the global object
+        let genericPool = [...(commonTemplates.generic || [])];
+        let metricPool = [...(commonTemplates.has_metric || [])];
+        let bodiesPool = [...(commonTemplates.bodies || [])];
+        let closingsPool = [...(commonTemplates.closings || [])];
 
         // 2. Category Specific Overrides/Additions
         if (CATEGORY_TEMPLATES[currentCategory] && CATEGORY_TEMPLATES[currentCategory][frameworkType]) {
             const catSpecific = CATEGORY_TEMPLATES[currentCategory][frameworkType];
 
             // Merge lists if they exist
-            if (catSpecific.generic) base.generic = [...base.generic, ...catSpecific.generic];
-            if (catSpecific.has_metric) base.has_metric = [...base.has_metric, ...catSpecific.has_metric];
-            // Bodies/Closings are usually shared or can be overridden similarly
-            if (catSpecific.bodies) base.bodies = [...base.bodies, ...catSpecific.bodies];
+            if (catSpecific.generic) genericPool = [...genericPool, ...catSpecific.generic];
+            if (catSpecific.has_metric) metricPool = [...metricPool, ...catSpecific.has_metric];
+            if (catSpecific.bodies) bodiesPool = [...bodiesPool, ...catSpecific.bodies];
+            // Closings can be merged or overridden if needed
         }
 
         // 3. Select Hook based on metric availability
-        const pool = hasMetric ? base.has_metric : base.generic;
+        const pool = hasMetric ? metricPool : genericPool;
         // Safety: if hasMetric is true but pool is empty, fall back to generic
-        const validPool = (pool && pool.length > 0) ? pool : base.generic;
+        const validPool = (pool && pool.length > 0) ? pool : genericPool;
 
         const hook = validPool[Math.floor(Math.random() * validPool.length)];
-        const body = base.bodies[Math.floor(Math.random() * base.bodies.length)];
-        const closing = base.closings[Math.floor(Math.random() * base.closings.length)];
+        const body = bodiesPool[Math.floor(Math.random() * bodiesPool.length)];
+        const closing = closingsPool[Math.floor(Math.random() * closingsPool.length)];
 
         return { hook, body, closing };
     }
