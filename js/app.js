@@ -50,40 +50,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // UI HELPERS
     // ========================================
 
-    // Function to set active category visual state
     function setActiveCategory(selectedBtn) {
-        // Reset all
         categoryBtns.forEach(btn => {
             btn.classList.remove('border-brand-500', 'bg-brand-500/10');
             btn.classList.add('border-white/10', 'bg-dark-900');
-
-            // Hide active border animation
             const activeBorder = btn.querySelector('.category-active-border');
             if(activeBorder) {
                 activeBorder.classList.remove('opacity-100', 'scale-100');
                 activeBorder.classList.add('opacity-0', 'scale-95');
             }
-
-            // Reset text color
             const label = btn.querySelector('span:nth-child(2)');
             if(label) label.classList.remove('text-brand-500');
         });
 
-        // Set active
         selectedBtn.classList.remove('border-white/10', 'bg-dark-900');
         selectedBtn.classList.add('border-brand-500', 'bg-brand-500/10');
-
         const activeBorder = selectedBtn.querySelector('.category-active-border');
         if(activeBorder) {
             activeBorder.classList.remove('opacity-0', 'scale-95');
             activeBorder.classList.add('opacity-100', 'scale-100');
         }
-
         const label = selectedBtn.querySelector('span:nth-child(2)');
         if(label) label.classList.add('text-brand-500');
     }
 
-    // Function to set active tone visual state
     function setActiveTone(selectedBtn) {
         toneBtns.forEach(btn => {
             btn.classList.remove('border-brand-500', 'bg-brand-500/20', 'text-white');
@@ -93,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedBtn.classList.add('border-brand-500', 'bg-brand-500/20', 'text-white');
     }
 
-    // Function to set active tab visual state
     function setActiveTab(selectedBtn) {
         tabBtns.forEach(btn => {
             btn.setAttribute('data-active', 'false');
@@ -109,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // INITIALIZATION
     // ========================================
 
-    // Initialize Category Selection
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             setActiveCategory(btn);
@@ -118,12 +106,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Set default category if exists
     if (categoryBtns.length > 0) {
         categoryBtns[0].click();
     }
 
-    // Initialize Tone Selection
     toneBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             setActiveTone(btn);
@@ -132,21 +118,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialize Tabs
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             setActiveTab(btn);
             currentTab = btn.dataset.tab;
             console.log(`🔄 탭 전환: ${currentTab}`);
-
-            // If scripts are already generated, display the selected one
             if (currentScripts[currentTab]) {
                 displayScript(currentTab);
             }
         });
     });
 
-    // Set default tab
     if (tabBtns.length > 0) {
         setActiveTab(tabBtns[0]);
     }
@@ -159,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
     scriptForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Get form data
         currentFormData = {
             product: document.getElementById('product').value,
             target: document.getElementById('target').value,
@@ -167,30 +148,21 @@ document.addEventListener('DOMContentLoaded', function() {
             solution: document.getElementById('solution').value
         };
 
-        // Validate
         if (!currentFormData.product || !currentFormData.target ||
             !currentFormData.pain || !currentFormData.solution) {
             alert('모든 필드를 입력해주세요! 🥺');
             return;
         }
 
-        // Show Loading
         showLoadingAnimation();
-
-        // Fake Delay for AI feel
         await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Generate Scripts
         generateAllScripts();
 
-        // Hide Loading
         loadingModal.classList.add('hidden');
         loadingModal.classList.remove('flex');
 
-        // Display Result (Default Tab)
         displayScript(currentTab);
 
-        // Confetti
         if (typeof confetti !== 'undefined') {
             confetti({
                 particleCount: 150,
@@ -228,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
 
-    // Josa handling
     function hasJongseong(word) {
         if (!word || word.length === 0) return false;
         const lastChar = word.charAt(word.length - 1);
@@ -250,29 +221,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Extract metrics from user input (e.g., "3일만에" -> "3일")
+    function extractMetrics(text) {
+        const regex = /(\d+(?:일|주|달|개월|년|시간|분|초|만원|원|%|배|개)?)/;
+        const match = text.match(regex);
+        return match ? match[0] : null;
+    }
+
+    // Get power adjective based on category
+    function getPowerAdj() {
+        if (typeof POWER_KEYWORDS === 'undefined') return '엄청난';
+        const keywords = POWER_KEYWORDS[currentCategory] || POWER_KEYWORDS['common'];
+        return keywords[Math.floor(Math.random() * keywords.length)];
+    }
+
     function smartReplace(text, formData) {
+        // 1. Extract Metric
+        let metric = extractMetrics(formData.solution) || extractMetrics(formData.pain) || "단기간";
+
+        // 2. Get Power Adjective
+        let powerAdj = getPowerAdj();
+
+        // 3. Replace Placeholders
+        text = text.replace(/{metric}/g, metric);
+        text = text.replace(/{power_adj}/g, powerAdj);
+
+        // 4. Josa Processing
         text = text.replace(/\{(product|target|pain|solution)\}\{([^}]+)\}/g, (match, variable, josa) => {
             const value = formData[variable];
             const selectedJosa = getJosa(value, josa);
             return value + selectedJosa;
         });
+
+        // 5. Basic Variable Replacement
         text = text.replace(/{product}/g, formData.product);
         text = text.replace(/{target}/g, formData.target);
         text = text.replace(/{pain}/g, formData.pain);
         text = text.replace(/{solution}/g, formData.solution);
+
         return text;
     }
 
     function generateAllScripts() {
         if (typeof TEMPLATES === 'undefined') return;
-        const types = ['viral', 'logic', 'sales'];
-        types.forEach(type => {
-            currentScripts[type] = generateScript(type);
-        });
+        // Map tabs to new template types: viral -> viral, logic -> pas, sales -> quest
+        // This maps the UI tabs to the Frameworks in TEMPLATES
+        currentScripts['viral'] = generateScript('viral');
+        currentScripts['logic'] = generateScript('pas');
+        currentScripts['sales'] = generateScript('quest');
     }
 
     function generateScript(type) {
-        const templates = TEMPLATES[currentCategory][type];
+        const templates = TEMPLATES[currentCategory][type] || TEMPLATES['common'][type];
+
         const hook = templates.hooks[Math.floor(Math.random() * templates.hooks.length)];
         const body = templates.bodies[Math.floor(Math.random() * templates.bodies.length)];
         const closing = templates.closings[Math.floor(Math.random() * templates.closings.length)];
@@ -280,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let script = hook + body + closing;
         script = smartReplace(script, currentFormData);
 
-        // Apply Tone Modifiers
         return applyTone(script, currentTone);
     }
 
@@ -293,23 +293,11 @@ document.addEventListener('DOMContentLoaded', function() {
             impact: ['‼️', '🚨', '⚡️', '👊', '✅']
         };
 
-        const endings = {
-            humor: ['는데요 ㅋㅋ', '거든요 🤣', '라구요 ㅎ'],
-            emotional: ['네요...', '답니다 ✨', '걸까요? 🥺'],
-            impact: ['입니다‼️', '하세요👊', '필수입니다✅']
-        };
-
-        // Simple stochastic replacement for end of sentences
-        // This is a very basic implementation. In a real app, we'd use more sophisticated NLP or regex.
         let modifiedText = text;
-
-        // Append random emojis from the category
         const categoryEmojis = emojis[tone];
-        if (categoryEmojis) {
-             // Add an emoji at the end
-            modifiedText += " " + categoryEmojis[Math.floor(Math.random() * categoryEmojis.length)];
 
-            // Randomly insert emoji at line breaks
+        if (categoryEmojis) {
+            modifiedText += " " + categoryEmojis[Math.floor(Math.random() * categoryEmojis.length)];
             modifiedText = modifiedText.replace(/\n\n/g, () => {
                  return (Math.random() > 0.7) ? ` ${categoryEmojis[Math.floor(Math.random() * categoryEmojis.length)]}\n\n` : '\n\n';
             });
@@ -319,17 +307,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayScript(type) {
-        // Update Caption Text
         captionText.innerHTML = currentScripts[type].replace(/\n/g, '<br>');
 
-        // Update Hashtags
         if (typeof HASHTAGS !== 'undefined') {
              const tags = HASHTAGS[currentCategory].join(' ');
              captionHashtags.textContent = tags;
         }
 
-        // Animate change
-        const phoneScreen = document.getElementById('captionText'); // Just animate text
+        const phoneScreen = document.getElementById('captionText');
         phoneScreen.classList.remove('fade-in');
         void phoneScreen.offsetWidth;
         phoneScreen.classList.add('fade-in');
@@ -340,7 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // BUTTON ACTIONS
     // ========================================
 
-    // Copy Logic
     async function handleCopy() {
         if (!currentScripts[currentTab]) return;
 
@@ -349,13 +333,11 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             await navigator.clipboard.writeText(textToCopy);
 
-            // Visual Feedback
             const originalIcon = copyBtn.innerHTML;
             copyBtn.innerHTML = '<i class="fas fa-check"></i>';
             copyBtn.classList.add('bg-green-500', 'text-white');
             copyBtn.classList.remove('bg-white', 'text-brand-600');
 
-            // Mobile feedback
             if(copyBtnMobile) {
                 const origMobile = copyBtnMobile.innerHTML;
                 copyBtnMobile.innerHTML = '<i class="fas fa-check"></i> 복사완료';
@@ -376,10 +358,15 @@ document.addEventListener('DOMContentLoaded', function() {
     copyBtn.addEventListener('click', handleCopy);
     if(copyBtnMobile) copyBtnMobile.addEventListener('click', handleCopy);
 
-    // Shuffle Logic
     function handleShuffle() {
-        if (!currentScripts[currentTab]) return; // Only if generated
-        currentScripts[currentTab] = generateScript(currentTab);
+        if (!currentScripts[currentTab]) return;
+
+        // Map tabs to framework types again for shuffle
+        let frameworkType = 'viral';
+        if (currentTab === 'logic') frameworkType = 'pas';
+        if (currentTab === 'sales') frameworkType = 'quest';
+
+        currentScripts[currentTab] = generateScript(frameworkType);
         displayScript(currentTab);
     }
 
@@ -391,13 +378,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // HISTORY FEATURE
     // ========================================
 
-    // Load History from LocalStorage
     function getHistory() {
         const history = localStorage.getItem('reels_history');
         return history ? JSON.parse(history) : [];
     }
 
-    // Save to History
     function saveHistory(scriptData) {
         const history = getHistory();
         const newItem = {
@@ -405,12 +390,11 @@ document.addEventListener('DOMContentLoaded', function() {
             date: new Date().toLocaleDateString(),
             ...scriptData
         };
-        history.unshift(newItem); // Add to top
-        if (history.length > 50) history.pop(); // Keep max 50
+        history.unshift(newItem);
+        if (history.length > 50) history.pop();
         localStorage.setItem('reels_history', JSON.stringify(history));
         renderHistoryList();
 
-        // Feedback
         const icon = saveToHistoryBtn.querySelector('i');
         icon.classList.remove('far');
         icon.classList.add('fas', 'text-brand-500');
@@ -420,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    // Render History List
     function renderHistoryList() {
         const history = getHistory();
         historyList.innerHTML = '';
@@ -452,7 +435,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Delete Item
     window.deleteHistoryItem = function(id) {
         let history = getHistory();
         history = history.filter(item => item.id !== id);
@@ -460,7 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderHistoryList();
     };
 
-    // Clear All
     clearHistoryBtn.addEventListener('click', () => {
         if(confirm('정말 모든 기록을 삭제하시겠습니까?')) {
             localStorage.removeItem('reels_history');
@@ -468,20 +449,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Open Modal
     historyBtn.addEventListener('click', () => {
         renderHistoryList();
         historyModal.classList.remove('hidden');
         historyModal.classList.add('flex');
     });
 
-    // Close Modal
     closeHistoryBtn.addEventListener('click', () => {
         historyModal.classList.add('hidden');
         historyModal.classList.remove('flex');
     });
 
-    // Close on outside click
     historyModal.addEventListener('click', (e) => {
         if (e.target === historyModal) {
             historyModal.classList.add('hidden');
@@ -489,7 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Save Button Click Handler
     saveToHistoryBtn.addEventListener('click', () => {
         if (!currentScripts[currentTab]) {
             alert('먼저 대본을 생성해주세요!');
@@ -498,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         saveHistory({
             category: currentCategory,
-            type: currentTab, // viral, logic, sales
+            type: currentTab,
             content: currentScripts[currentTab]
         });
     });
