@@ -3,7 +3,7 @@
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎬 릴스 대본 자판기 2.0 시작!');
+    console.log('🎬 릴스 대본 자판기 2.0 (Smart Edition) 시작!');
 
     // ========================================
     // STATE MANAGEMENT
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyBtn = document.getElementById('copyBtn');
     const shuffleBtn = document.getElementById('shuffleBtn');
 
-    // Mobile buttons (optional, if separate)
+    // Mobile buttons
     const copyBtnMobile = document.getElementById('copyBtnMobile');
     const shuffleBtnMobile = document.getElementById('shuffleBtnMobile');
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedBtn.classList.add('border-brand-500', 'bg-brand-500/10');
         const activeBorder = selectedBtn.querySelector('.category-active-border');
         if(activeBorder) {
-            activeBorder.classList.remove('opacity-0', 'scale-95');
+            activeBorder.classList.remove('opacity-0', 'scale-100');
             activeBorder.classList.add('opacity-100', 'scale-100');
         }
         const label = selectedBtn.querySelector('span:nth-child(2)');
@@ -102,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', () => {
             setActiveCategory(btn);
             currentCategory = btn.dataset.category;
-            console.log(`📌 카테고리 선택: ${currentCategory}`);
         });
     });
 
@@ -114,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', () => {
             setActiveTone(btn);
             currentTone = btn.dataset.tone;
-            console.log(`🎨 톤 선택: ${currentTone}`);
         });
     });
 
@@ -122,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', () => {
             setActiveTab(btn);
             currentTab = btn.dataset.tab;
-            console.log(`🔄 탭 전환: ${currentTab}`);
             if (currentScripts[currentTab]) {
                 displayScript(currentTab);
             }
@@ -142,10 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
 
         currentFormData = {
-            product: document.getElementById('product').value,
-            target: document.getElementById('target').value,
-            pain: document.getElementById('pain').value,
-            solution: document.getElementById('solution').value
+            product: document.getElementById('product').value.trim(),
+            target: document.getElementById('target').value.trim(),
+            pain: document.getElementById('pain').value.trim(),
+            solution: document.getElementById('solution').value.trim()
         };
 
         if (!currentFormData.product || !currentFormData.target ||
@@ -155,7 +152,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         showLoadingAnimation();
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Artificial delay for UX
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         generateAllScripts();
 
         loadingModal.classList.add('hidden');
@@ -174,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // ========================================
-    // CORE LOGIC
+    // CORE LOGIC (Smart Context Engine)
     // ========================================
 
     function showLoadingAnimation() {
@@ -183,8 +182,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const messages = [
             '업종별 트렌드 분석 중...',
-            '후킹 키워드 조합 중...',
-            '최적의 해시태그 매칭 중...',
+            '키워드 추출 및 매칭 중...',
+            '문맥 최적화 실행 중...',
             '거의 다 됐어요! ✨'
         ];
         let idx = 0;
@@ -197,15 +196,33 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 clearInterval(interval);
             }
-        }, 500);
+        }, 400);
     }
 
+    // Improved Josa Processing
     function hasJongseong(word) {
         if (!word || word.length === 0) return false;
         const lastChar = word.charAt(word.length - 1);
         const code = lastChar.charCodeAt(0);
-        if (code < 0xAC00 || code > 0xD7A3) return /[0-9]/.test(lastChar) ? false : true;
-        return (code - 0xAC00) % 28 !== 0;
+
+        // Hangul
+        if (code >= 0xAC00 && code <= 0xD7A3) {
+            return (code - 0xAC00) % 28 !== 0;
+        }
+        // Number
+        if (/[0-9]/.test(lastChar)) {
+             // 0, 1, 3, 6, 7, 8 have jongseong in Korean pronunciation (yong, il, sam, yuk, chil, pal)
+             // 2, 4, 5, 9 (i, sa, o, gu) do not
+             return /[013678]/.test(lastChar);
+        }
+        // English (Approximate: consonants end with jongseong mostly, vowels don't)
+        // This is tricky, simple heuristic:
+        // Ends in l, m, n, r, ng, k, p, t, b, d, g, c, x, z usually have consonant sound
+        if (/[a-zA-Z]/.test(lastChar)) {
+             return /[lmnrkgptbdcxzLMNRKGPTBDCXZ]$/.test(lastChar);
+        }
+
+        return false;
     }
 
     function getJosa(word, josaType) {
@@ -215,45 +232,62 @@ document.addEventListener('DOMContentLoaded', function() {
             case '을/를': return hasFinalConsonant ? '을' : '를';
             case '은/는': return hasFinalConsonant ? '은' : '는';
             case '과/와': return hasFinalConsonant ? '과' : '와';
-            case '아/야': return hasFinalConsonant ? '아' : '야';
-            case '이어/여': return hasFinalConsonant ? '이어' : '여';
+            // '로' is special: if jongseong is 'ㄹ', it uses '로', other consonant '으로'
+            case '으로/로':
+                if (!hasFinalConsonant) return '로';
+                // Check if last char is ㄹ (Real check is hard without decomposing, assuming standard match)
+                // Simplified: treat as '으로' if consonant
+                return '으로';
             default: return '';
         }
     }
 
-    // Extract metrics from user input (e.g., "3일만에" -> "3일")
+    // 1. Improved Metric Extraction
+    // Returns object: { original: string, value: string, unit: string } or null
     function extractMetrics(text) {
-        const regex = /(\d+(?:일|주|달|개월|년|시간|분|초|만원|원|%|배|개)?)/;
+        // Matches: number + optional space + unit
+        // Units expanded: kg, cm, mm, kcal, etc.
+        const regex = /(\d+(?:\.\d+)?)\s*(일|주|달|개월|년|시간|분|초|만원|원|%|배|개|kg|cm|mm|kcal|명|가지|step|Step|STEP|km|m)?/;
         const match = text.match(regex);
-        return match ? match[0] : null;
+        if (match) {
+            return {
+                full: match[0],
+                value: match[1],
+                unit: match[2] || ''
+            };
+        }
+        return null;
     }
 
-    // Get power adjective based on category
     function getPowerAdj() {
         if (typeof POWER_KEYWORDS === 'undefined') return '엄청난';
         const keywords = POWER_KEYWORDS[currentCategory] || POWER_KEYWORDS['common'];
         return keywords[Math.floor(Math.random() * keywords.length)];
     }
 
-    function smartReplace(text, formData) {
-        // 1. Extract Metric
-        let metric = extractMetrics(formData.solution) || extractMetrics(formData.pain) || "단기간";
+    function smartReplace(text, formData, extractedMetric) {
 
-        // 2. Get Power Adjective
-        let powerAdj = getPowerAdj();
+        // 1. Replace Placeholders
+        // Handle {metric} specifically
+        if (text.includes('{metric}')) {
+            if (extractedMetric) {
+                 text = text.replace(/{metric}/g, extractedMetric.full);
+            } else {
+                 // Fallback if template has metric but no metric found (shouldn't happen with correct selection)
+                 text = text.replace(/{metric}/g, '단기간');
+            }
+        }
 
-        // 3. Replace Placeholders
-        text = text.replace(/{metric}/g, metric);
-        text = text.replace(/{power_adj}/g, powerAdj);
+        text = text.replace(/{power_adj}/g, getPowerAdj());
 
-        // 4. Josa Processing
+        // 2. Josa Processing with Variable Injection
         text = text.replace(/\{(product|target|pain|solution)\}\{([^}]+)\}/g, (match, variable, josa) => {
             const value = formData[variable];
             const selectedJosa = getJosa(value, josa);
             return value + selectedJosa;
         });
 
-        // 5. Basic Variable Replacement
+        // 3. Simple Variable Replacement (if no Josa specified)
         text = text.replace(/{product}/g, formData.product);
         text = text.replace(/{target}/g, formData.target);
         text = text.replace(/{pain}/g, formData.pain);
@@ -262,24 +296,52 @@ document.addEventListener('DOMContentLoaded', function() {
         return text;
     }
 
-    function generateAllScripts() {
-        if (typeof TEMPLATES === 'undefined') return;
-        // Map tabs to new template types: viral -> viral, logic -> pas, sales -> quest
-        // This maps the UI tabs to the Frameworks in TEMPLATES
-        currentScripts['viral'] = generateScript('viral');
-        currentScripts['logic'] = generateScript('pas');
-        currentScripts['sales'] = generateScript('quest');
+    function getTemplate(frameworkType, hasMetric) {
+        // 1. Base Common Templates
+        let base = TEMPLATES['common'][frameworkType];
+
+        // 2. Category Specific Overrides/Additions
+        if (CATEGORY_TEMPLATES[currentCategory] && CATEGORY_TEMPLATES[currentCategory][frameworkType]) {
+            const catSpecific = CATEGORY_TEMPLATES[currentCategory][frameworkType];
+
+            // Merge lists if they exist
+            if (catSpecific.generic) base.generic = [...base.generic, ...catSpecific.generic];
+            if (catSpecific.has_metric) base.has_metric = [...base.has_metric, ...catSpecific.has_metric];
+            // Bodies/Closings are usually shared or can be overridden similarly
+            if (catSpecific.bodies) base.bodies = [...base.bodies, ...catSpecific.bodies];
+        }
+
+        // 3. Select Hook based on metric availability
+        const pool = hasMetric ? base.has_metric : base.generic;
+        // Safety: if hasMetric is true but pool is empty, fall back to generic
+        const validPool = (pool && pool.length > 0) ? pool : base.generic;
+
+        const hook = validPool[Math.floor(Math.random() * validPool.length)];
+        const body = base.bodies[Math.floor(Math.random() * base.bodies.length)];
+        const closing = base.closings[Math.floor(Math.random() * base.closings.length)];
+
+        return { hook, body, closing };
     }
 
-    function generateScript(type) {
-        const templates = TEMPLATES[currentCategory][type] || TEMPLATES['common'][type];
+    function generateAllScripts() {
+        if (typeof TEMPLATES === 'undefined') return;
 
-        const hook = templates.hooks[Math.floor(Math.random() * templates.hooks.length)];
-        const body = templates.bodies[Math.floor(Math.random() * templates.bodies.length)];
-        const closing = templates.closings[Math.floor(Math.random() * templates.closings.length)];
+        // Analyze input for metrics once
+        // We check solution or pain for numbers
+        const metricInSolution = extractMetrics(currentFormData.solution);
+        const metricInPain = extractMetrics(currentFormData.pain);
+        const bestMetric = metricInSolution || metricInPain; // Prefer solution metric
 
-        let script = hook + body + closing;
-        script = smartReplace(script, currentFormData);
+        currentScripts['viral'] = generateScript('viral', bestMetric);
+        currentScripts['logic'] = generateScript('pas', bestMetric);
+        currentScripts['sales'] = generateScript('quest', bestMetric);
+    }
+
+    function generateScript(type, metricObj) {
+        const template = getTemplate(type, !!metricObj);
+
+        let script = template.hook + template.body + template.closing;
+        script = smartReplace(script, currentFormData, metricObj);
 
         return applyTone(script, currentTone);
     }
@@ -288,16 +350,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (tone === 'basic') return text;
 
         const emojis = {
-            humor: ['🤣', 'ㅋㅋㅋ', '🤭', '🔥', '🤪'],
+            humor: ['🤣', 'ㅋㅋㅋ', '🤭', '🔥', '🤪', '👀', '🤷‍♀️'],
             emotional: ['✨', '🥺', '💖', '🌿', '...'],
-            impact: ['‼️', '🚨', '⚡️', '👊', '✅']
+            impact: ['‼️', '🚨', '⚡️', '👊', '✅', '⚠️']
         };
 
         let modifiedText = text;
         const categoryEmojis = emojis[tone];
 
         if (categoryEmojis) {
+             // Append to end
             modifiedText += " " + categoryEmojis[Math.floor(Math.random() * categoryEmojis.length)];
+            // Randomly insert in paragraph breaks
             modifiedText = modifiedText.replace(/\n\n/g, () => {
                  return (Math.random() > 0.7) ? ` ${categoryEmojis[Math.floor(Math.random() * categoryEmojis.length)]}\n\n` : '\n\n';
             });
@@ -310,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
         captionText.innerHTML = currentScripts[type].replace(/\n/g, '<br>');
 
         if (typeof HASHTAGS !== 'undefined') {
-             const tags = HASHTAGS[currentCategory].join(' ');
+             const tags = HASHTAGS[currentCategory] ? HASHTAGS[currentCategory].join(' ') : HASHTAGS['common'].join(' ');
              captionHashtags.textContent = tags;
         }
 
@@ -328,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function handleCopy() {
         if (!currentScripts[currentTab]) return;
 
-        const textToCopy = currentScripts[currentTab] + '\n\n' + HASHTAGS[currentCategory].join(' ');
+        const textToCopy = currentScripts[currentTab] + '\n\n' + captionHashtags.textContent;
 
         try {
             await navigator.clipboard.writeText(textToCopy);
@@ -361,12 +425,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleShuffle() {
         if (!currentScripts[currentTab]) return;
 
-        // Map tabs to framework types again for shuffle
+        // Regenerate single script
+        const metricInSolution = extractMetrics(currentFormData.solution);
+        const metricInPain = extractMetrics(currentFormData.pain);
+        const bestMetric = metricInSolution || metricInPain;
+
         let frameworkType = 'viral';
         if (currentTab === 'logic') frameworkType = 'pas';
         if (currentTab === 'sales') frameworkType = 'quest';
 
-        currentScripts[currentTab] = generateScript(frameworkType);
+        currentScripts[currentTab] = generateScript(frameworkType, bestMetric);
         displayScript(currentTab);
     }
 

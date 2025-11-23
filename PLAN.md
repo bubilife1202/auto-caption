@@ -1,70 +1,43 @@
-# 🚀 릴스 대본 자판기 2.0: 획기적 개선을 위한 리브랜딩 및 기능 고도화 기획안
 
-## 1. 기획 배경 및 목표
-**"단순한 텍스트 생성기를 넘어, 마케터의 필수 SaaS 도구로 도약"**
+I've analyzed the current codebase and the user's feedback.
 
-현재의 결과물은 기능적으로 작동하지만, '도구의 완성도'와 '사용자 경험(UX)' 측면에서 고객에게 충분한 가치를 전달하지 못하고 있습니다. 이를 해결하기 위해 디자인, 기능, 기술적 구조를 전면적으로 개편하여 **"돈을 내고서라도 쓰고 싶은 프로덕트"** 수준으로 끌어올리는 것을 목표로 합니다.
+### Problems Identified
 
----
+1.  **Metric Extraction Failure**: The `extractMetrics` function relies on a simple regex `(\d+(?:일|주|달|개월|년|시간|분|초|만원|원|%|배|개)?)`. If the user inputs "English score doesn't go up" or "Point lecture", it might return null or fail to find a meaningful metric.
+2.  **Fallback Logic Weakness**: When `extractMetrics` fails (returns null), it defaults to "단기간" (short term) or similar hardcoded strings. This doesn't fit all contexts.
+3.  **Context-Unaware Replacements**: The `smartReplace` function blindly replaces `{metric}`. If the metric is "단기간" but the template expects a number (e.g., "{metric}배"), we get "단기간배" which is nonsensical.
+4.  **Template Rigidity**: Templates often force a structure like "{pain} 때문에 {metric} 고생했다" (Suffered for {metric} because of {pain}). If the user input for `pain` is "English score doesn't go up", it becomes "English score doesn't go up 때문에 3일 고생했다". The Josa (Korean particles) handling helps, but the semantic flow might still be awkward.
+5.  **Josa Issues**: The `getJosa` function seems generally okay for Hangul, but might fail on English words or mixed inputs unless handled carefully (though `hasJongseong` logic seems standard). However, the main issue is likely semantic mismatch.
+6.  **"Groundbreaking" Improvement**: The user wants a "drastic" improvement. This implies not just fixing bugs, but enhancing the *quality* and *variety* of the generated text.
 
-## 2. 핵심 개선 전략 (3-Pillar Strategy)
+### Plan for "Groundbreaking" Improvement
 
-### 🎨 A. 디자인 & UX의 획기적 개선 (Look & Feel)
-기존의 어두운 '개발자스러운' 디자인을 탈피하고, **트렌디하고 신뢰감 있는 모던 SaaS 스타일**로 변경합니다.
+I will implement a **"Smart Context Engine"** that classifies inputs and selects more appropriate templates or fallback values. I will also refine the templates to be more flexible and add a "Safety Net" to ensure grammar.
 
-1.  **Split View (분할 화면) 도입** (데스크탑 기준)
-    *   **Left**: 입력 폼 (직관적인 UX)
-    *   **Right**: **리얼타임 인스타그램 미리보기 (Phone Mockup)**
-        *   단순 텍스트 나열이 아닌, 실제 인스타그램 앱 화면(프로필, 하단 바, 좋아요 버튼 등) 안에서 내 글이 어떻게 보일지 시각적으로 보여줍니다.
-2.  **Step-by-Step 입력 방식 또는 그룹화**
-    *   입력 피로도를 줄이기 위해 관련 항목끼리 묶어서 시각적으로 정리합니다.
-3.  **감성적인 인터랙션**
-    *   버튼 클릭, 탭 전환 시 부드러운 애니메이션(Framer Motion 스타일) 적용.
-    *   생성 시 단순 로딩바가 아닌, AI가 생각하는 듯한 고급스러운 인터랙션 제공.
+**Specific Steps:**
 
-### 🛠 B. 기능적 차별화 (Killer Features)
-단순 랜덤 조합을 넘어, 사용자가 **"내 비서"**라고 느낄 수 있는 기능들을 추가합니다.
+1.  **Enhance `extractMetrics`**: Improve the regex to catch more patterns (ranges, english units) and return a structured object (value + unit) rather than just a string, allowing for better sentence integration.
+2.  **Input Analysis & Tagging**: Add a function to analyze the *type* of input. E.g., is the `pain` physical (pain, skin) or mental (stress, worry)? Is the `solution` a product or a service? (This might be hard with simple JS, but I can use keyword matching).
+3.  **Dynamic Template Selection**: instead of random selection, prioritize templates that match the available data. If no metric is found, use "Metric-Free" templates.
+4.  **Refined Templates**:
+    *   Create a set of "Universal" templates that work without specific metrics.
+    *   Fix existing templates to be less prone to awkward phrasing.
+5.  **Fix Josa/Grammar Logic**: Ensure English words are handled gracefully (defaulting to a safe particle or checking the last char more robustly).
+6.  **Verification**: Create a new verification script `verification/verify_smart_generation.py` to test various inputs (including English, no numbers, complex sentences) and ensure the output is natural.
 
-1.  **톤앤매너(Tone & Manner) 선택 기능**
-    *   기존: 업종만 선택
-    *   **개선**: 어조 선택 추가 (예: 🤪 유머러스한 / 🧐 논리적인 / 💧 감성적인 / ⚡️ 강력한) -> 이에 따라 문체와 이모지 사용량이 달라짐.
-2.  **히스토리(History) 기능 (Local Storage)**
-    *   사용자가 생성했던 대본을 브라우저에 자동 저장하여, 나중에 다시 찾아볼 수 있는 '내 보관함' 탭 제공.
-3.  **스마트 클립보드 & 공유**
-    *   "제목만 복사", "본문만 복사", "해시태그만 복사" 등 디테일한 복사 옵션 제공.
-    *   이미지 캡쳐 기능 (생성된 대본을 카드뉴스 형태 이미지로 저장).
+### Pre-computation/Pre-analysis
 
-### 🏗 C. 기술적 구조 고도화 (Architecture)
-유지보수와 확장이 용이하도록 코드를 체계화합니다.
+I'll start by creating a reproduction script to confirm the "nonsensical" output with the user's likely inputs (based on the image description or typical failure cases).
+Then I will refactor `js/app.js` and `js/data.js`.
 
-1.  **모듈화 (Modularization)**
-    *   `index.html` 하나에 뭉쳐있는 코드를 `css/`, `js/` 폴더로 분리.
-    *   템플릿 데이터(`data.js`)와 로직(`app.js`) 분리.
-2.  **데이터 구조 개선**
-    *   확장 가능한 JSON 형태의 템플릿 구조 설계.
+**User Input from Image (inferred/mocked):**
+*   Product: "영어강의" (English Lecture)
+*   Target: "수험생" (Examinee)
+*   Pain: "영어 점수 안오름" (English score not going up)
+*   Solution: "포인트 강의" (Point lecture)
 
----
+**Hypothetical Bad Output:**
+"영어 점수 안오름 때문에 단기간배 고생했다" (Suffered for short-term times because of English score not going up) -> "단기간배" is wrong.
+"영어 점수 안오름(이)가 진짜 짜증날 때" -> "안오름이가" might be awkward if not handled as a noun phrase properly, but "안오름" ends in 'm' (consonant) so '이' is picked. "안오름이" is okay-ish but "점수가 안오르는 게" would be better.
 
-## 3. 상세 화면 구성안 (Wireframe Concept)
-
-| 구역 | 상세 내용 |
-| :--- | :--- |
-| **헤더** | 심플한 로고, 다크/라이트 모드 토글, 히스토리 버튼 |
-| **입력부 (좌측)** | 1. 업종 선택 (아이콘 카드 형태)<br>2. 톤앤매너 선택 (슬라이더 또는 칩)<br>3. 핵심 정보 입력 (상품명, 타겟 등)<br>4. "매직 생성" 버튼 (그라데이션 효과) |
-| **결과부 (우측)** | **📱 스마트폰 목업 프레임**<br>- 상단: 인스타 헤더<br>- 중단: 생성된 대본이 적용된 게시물 화면<br>- 하단: 좋아요/댓글/공유 버튼 (가상)<br>- 플로팅 액션 버튼: 복사, 이미지 저장, 다시 생성 |
-
----
-
-## 4. 진행 일정 (Roadmap)
-
-1.  **Phase 1: 구조 분리 및 기본 디자인 시스템 정립** (오늘)
-    *   파일 분리, 새로운 컬러 팔레트 및 폰트 적용.
-2.  **Phase 2: UI 전면 개편 및 스마트폰 목업 구현** (오늘)
-    *   Split View 구현, 인스타그램 미리보기 UI 코딩.
-3.  **Phase 3: 고급 기능 구현** (내일)
-    *   톤앤매너 로직, 히스토리 저장 기능, 이모지 알고리즘 강화.
-
----
-
-**👨‍💻 개발자 코멘트:**
-고객님의 피드백을 반영하여, 이 도구를 단순한 '자판기'가 아닌 **'마케팅 솔루션'**으로 업그레이드하겠습니다. 위 기획안대로 진행 승인해 주시면 즉시 착수하겠습니다.
+I'll proceed with the plan.

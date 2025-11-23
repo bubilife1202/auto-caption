@@ -3,36 +3,38 @@
 // ========================================
 
 const POWER_KEYWORDS = {
-    common: ['초간단', '3초 컷', '무조건', '실패 없는', '진짜', '역대급', '필수', '비밀', '꿀팁', 'TOP3'],
-    beauty: ['촉촉한', '광나는', '쫀쫀한', '여신', '인생템', '피부과', '성형급', '동안', '매끈한', '투명한'],
-    food: ['존맛', '웨이팅', '숨은', '현지인', '가성비', '푸짐한', '입에서 녹는', '마약', '단골', '인생'],
-    education: ['1등급', '단기간', '합격', '비법', '노하우', '공식', '암기법', '서울대', '독학', '마스터'],
-    professional: ['수익', '자동화', '세금', '절세', '폭등', '급등', '무료', '상담', '법적', '리스크']
+    common: ['초간단', '3초 컷', '무조건', '실패 없는', '진짜', '역대급', '필수', '비밀', '꿀팁', 'TOP3', '대박', '레전드'],
+    beauty: ['촉촉한', '광나는', '쫀쫀한', '여신', '인생템', '피부과', '성형급', '동안', '매끈한', '투명한', '물광'],
+    food: ['존맛', '웨이팅', '숨은', '현지인', '가성비', '푸짐한', '입에서 녹는', '마약', '단골', '인생', '겉바속촉'],
+    education: ['1등급', '단기간', '합격', '비법', '노하우', '공식', '암기법', '서울대', '독학', '마스터', '족집게'],
+    professional: ['수익', '자동화', '세금', '절세', '폭등', '급등', '무료', '상담', '법적', '리스크', '노후']
 };
 
-// New Frameworks: PAS (Problem-Agitation-Solution), QUEST (Qualify-Understand-Educate-Stimulate-Transition)
 const TEMPLATES = {
-    // 공통 템플릿
     common: {
-        viral: { // Short, Hook-focused
-            hooks: [
+        viral: {
+            has_metric: [
+                "이거 알고 나서 삶의 질 {metric}배 올라감 🚀",
+                "속는 셈 치고 딱 {metric}만 해봐 ⏳",
+                "{metric} 투자해서 {power_adj} 효과 보는 법 💸",
+                "단 {metric}만에 {pain} 탈출! ✨"
+            ],
+            generic: [
                 "{pain}{으/는} 사람 손 🙋‍♀️",
                 "나만 {pain} 심한 거 아니지? 😂",
                 "이거 모르고 쓰는 사람 많던데 🤫",
                 "{pain} 때문에 스트레스받는 중 🤯",
-                "진작 이렇게 할 걸... {metric} 아까워 😭",
                 "{target}이라면 다 아는 그 고민 🤔",
                 "아무도 안 알려주는 {power_adj} 방법 🔥",
                 "{pain}{이/가} 진짜 짜증날 때 😡",
-                "이거 알고 나서 삶의 질 {metric}배 올라감 🚀",
-                "속는 셈 치고 딱 {metric}만 해봐 ⏳"
+                "절대 실패 없는 {product} 활용법 💯"
             ],
             bodies: [
-                "\n\n{product} 써보니\n{solution}\n\n{pain} 확실히 나아짐 👍\n\n",
-                "\n\n{product}{으/로} 바꿨더니\n{solution} 느껴짐 ✨\n\n이제 {pain} 안 생김 🙅‍♀️\n\n",
-                "\n\n{target}한테 물어봤더니\n다들 {product} 쓴대 🗣️\n\n나도 써봤는데 {solution}\n\n",
-                "\n\n{pain} 때문에 힘들었는데\n{product} 쓰고 나서\n{solution}\n\n",
-                "\n\n우연히 알게 된 {product}\n{metric}째 쓰는데\n{solution} 확실함 ✅\n\n"
+                "\n\n{product} 써보니\n{solution} 효과 대박임 👍\n\n{pain} 이제 안녕 👋\n\n",
+                "\n\n{product}{으/로} 바꿨더니\n{solution} 바로 느껴짐 ✨\n\n이제 {pain} 걱정 끝 🙅‍♀️\n\n",
+                "\n\n{target}한테 물어봤더니\n다들 {product} 쓴대 🗣️\n\n나도 써봤는데\n{solution} 진짜네..\n\n",
+                "\n\n{pain} 때문에 힘들었는데\n{product} 덕분에\n{solution} 경험함 🎁\n\n",
+                "\n\n우연히 알게 된 {product}\n써보니까\n{solution} 확실함 ✅\n\n"
             ],
             closings: [
                 "링크에 내가 쓴 거 공유함 👇",
@@ -42,8 +44,12 @@ const TEMPLATES = {
                 "제품명 프로필에 있음 🔗"
             ]
         },
-        pas: { // Problem - Agitation - Solution
-            hooks: [
+        pas: {
+            has_metric: [
+                "아직도 {metric} 넘게 {pain} 하시나요? 😢",
+                "{metric} 안에 {pain} 해결하는 법 ⏱️"
+            ],
+            generic: [
                 "아직도 {pain} 때문에 고생하시나요? 😢",
                 "{pain}, 언제까지 참으실 건가요? 🛑",
                 "{target} 여러분, {pain} 그냥 두면 큰일납니다 🚨",
@@ -52,8 +58,8 @@ const TEMPLATES = {
             ],
             bodies: [
                 "\n\n저도 처음엔 대수롭지 않게 생각했어요.\n하지만 시간이 지날수록\n더 심해지더라고요. 😰\n\n진짜 스트레스 받아서\n별의별 방법 다 써봤는데...\n\n결국 답은 {product}였어요.\n\n{solution}\n진작 알았으면 좋았을 텐데! ✨\n\n",
-                "\n\n남들은 다 해결했다는데\n나만 그대로인 것 같아 답답하셨죠? 😤\n\n그거 방치하면 나중에\n{metric}배 더 힘들어집니다.\n\n지금이라도 {product}{으/로} 시작하세요.\n\n{solution}\n확실히 달라집니다. 💪\n\n",
-                "\n\n매일 아침 거울 볼 때마다\n한숨만 나오시나요? 💨\n\n그 마음 저도 알아요.\n저도 {metric} 동안 고생했거든요.\n\n그런데 {product} 만나고\n인생이 바뀌었습니다.\n\n{solution}\n여러분도 할 수 있어요! 🙌\n\n"
+                "\n\n남들은 다 해결했다는데\n나만 그대로인 것 같아 답답하셨죠? 😤\n\n그거 방치하면 나중에\n더 힘들어집니다.\n\n지금이라도 {product}{으/로} 시작하세요.\n\n{solution}\n확실히 달라집니다. 💪\n\n",
+                "\n\n매일 아침 거울 볼 때마다\n한숨만 나오시나요? 💨\n\n그 마음 저도 알아요.\n저도 꽤 오래 고생했거든요.\n\n그런데 {product} 만나고\n인생이 바뀌었습니다.\n\n{solution}\n여러분도 할 수 있어요! 🙌\n\n"
             ],
             closings: [
                 "더 늦기 전에 시작해보세요! 👉",
@@ -63,12 +69,15 @@ const TEMPLATES = {
                 "필요한 친구 태그하기 @ 👥"
             ]
         },
-        quest: { // Qualify - Understand - Educate - Stimulate - Transition
-            hooks: [
+        quest: {
+            has_metric: [
+                "단 {metric} 투자로 {pain} 해결? 😲",
+                "{metric}만에 {target} 필수템 등극 🏆"
+            ],
+            generic: [
                 "{target} 주목! {pain} 해결하고 싶은 분만 보세요 👀",
                 "혹시 {pain} 겪고 있는 {target}이신가요? 👋",
                 "{pain} 없이 {solution} 하고 싶은 분? 🙋‍♂️",
-                "3초 안에 {pain} 탈출하는 법 알려드림 ⏱️",
                 "{target} 필독! {power_adj} 정보 가져왔음 📚"
             ],
             bodies: [
@@ -84,212 +93,71 @@ const TEMPLATES = {
             ]
         }
     },
+    // Other categories can extend common structure later or inherit
+    // For simplicity, we merge specific category content into the logic
+};
 
-    // 뷰티·패션 템플릿
+// Make specific categories inherit/override
+const CATEGORY_TEMPLATES = {
     beauty: {
         viral: {
-            hooks: [
+            generic: [
                 "{pain} 싹 사라짐... 이거 실화? 🫢",
                 "피부과 원장님이 싫어하는 {power_adj} 관리법 🤫",
                 "나만 알고 싶은 {product} 공개함 💖",
-                "단 {metric}만에 피부 뒤집어짐 (좋은 뜻) ✨",
                 "화장품 다이어트? 이거 하나면 끝 🧴",
                 "{target} 필수템! 품절 전에 사야 함 🛒"
             ],
-            bodies: [
-                "\n\n{product} 쓰고 나서\n주변에서 뭐 했냐고 물어봄 ㅋㅋ\n\n{solution}\n이게 진짜 되네...\n\n{pain} 때문에 고민이었는데\n이젠 거울 볼 맛 난다! 🥰\n\n",
-                "\n\nSNS에서 난리 난 {product}\n반신반의하며 써봤는데...\n\n와... 대박 👍\n{solution}\n\n피부결이 달라짐.\n{pain} 걱정 끝! 👋\n\n"
-            ],
-            closings: [
-                "정보는 댓글 확인 👇",
-                "공구 일정은 스토리 참고 🗓️",
-                "친구 태그하고 소문내기 🗣️"
-            ]
-        },
-        pas: {
-            hooks: [
-                "비싼 돈 주고 관리받아도 {pain} 그대로라고요? 💸",
-                "화장으로도 안 가려지는 {pain}, 스트레스시죠? 😩",
-                "매일 아침 {pain} 때문에 화장 시간 길어지나요? ⏰"
-            ],
-            bodies: [
-                "\n\n그거 계속 두면\n나중에 레이저로도 안 돼요. 😱\n\n지금부터라도 기초를 바꿔야 합니다.\n\n{product}{은/는} 달라요.\n근본적인 원인을 잡아주니까요.\n\n{solution}\n\n이제 컨실러 없이 당당하게! ✨\n\n",
-                "\n\n피부는 거짓말 안 해요.\n잘못된 습관이 쌓여 {pain}이 된 거죠.\n\n더 악화되기 전에\n{product}{으/로} 심폐소생술 하세요! 🚑\n\n{solution}\n일주일만 써봐도 압니다.\n\n"
-            ],
-            closings: [
-                "피부 고민 상담은 DM 💌",
-                "구매 좌표는 프로필 링크 🔗",
-                "리얼 후기 보러가기 👀"
-            ]
-        },
-        quest: {
-            hooks: [
-                "{pain} 고민인 {target} 찾습니다! 🧐",
-                "혹시 지금 화장대 앞에서 한숨 쉬셨나요? 💨",
-                "피부 좋아지는 {power_adj} 습관, 알고 싶다면? 🙋‍♀️"
-            ],
-            bodies: [
-                "\n\n남들은 피부 좋아지는데\n나만 제자리걸음인 것 같죠?\n\n그건 제품 문제가 아니라\n방법 문제일 수 있어요. 🤔\n\n{product}{을/를} 루틴에 추가해보세요.\n\n피부 깊숙이 스며들어\n{solution} 효과를 줍니다. 💧\n\n달라진 피부결,\n직접 손끝으로 느껴보세요. ✨\n\n"
-            ],
-            closings: [
-                "무료 샘플 신청하기 🎁",
-                "피부 타입별 추천 받기 👇",
-                "저장해두고 매일 따라하기 💾"
+            has_metric: [
+                 "단 {metric}만에 피부 뒤집어짐 (좋은 뜻) ✨"
             ]
         }
     },
-
-    // 맛집·카페 템플릿
     food: {
         viral: {
-            hooks: [
+            generic: [
                 "여기 진짜 미쳤음... 🫢 {pain} 절대 없음",
-                "웨이팅 {metric} 기다려도 안 아까운 맛집 🕰️",
                 "사장님 남는 거 있어요? {power_adj} 가성비 💸",
                 "{target}들 사이에서 소문난 그곳 🤫",
                 "한 입 먹자마자 기절 😵 {product} 맛집"
             ],
-            bodies: [
-                "\n\n{product} 좋아하면\n여기 무조건 가야 함.\n\n왜냐고?\n{solution}이니까! 😋\n\n{pain} 걱정 없이\n배 터지게 먹고 옴 ㅋㅋ\n\n",
-                "\n\n비주얼부터 합격 💯\n맛은 더 대박임.\n\n{product} 한 입 먹으면\n스트레스 다 풀림.\n\n{solution}\n재방문 의사 200% 🙆‍♀️\n\n"
-            ],
-            closings: [
-                "위치 저장 필수 📍",
-                "같이 갈 친구 태그 @ 👯‍♀️",
-                "사장님 돈쭐내러 가자 🏃‍♀️"
-            ]
-        },
-        pas: {
-            hooks: [
-                "맛집 갔다가 {pain} 때문에 실망한 적 있죠? 😞",
-                "비싼 돈 내고 맛없는 거 먹으면 화나잖아요 😡",
-                "아직도 {pain} 없는 {product} 못 찾으셨나요? 🤷‍♂️"
-            ],
-            bodies: [
-                "\n\n기분 좋게 갔는데\n서비스 엉망이면 입맛 뚝 떨어지죠.\n\n하지만 여긴 다릅니다.\n\n{product} 퀄리티는 기본,\n친절함까지 갖췄어요. 😊\n\n{solution}\n\n진짜 대접받는 기분!\n실패 없는 한 끼를 원한다면 정답입니다. ✅\n\n"
-            ],
-            closings: [
-                "예약 링크는 프로필에 📅",
-                "주말엔 웨이팅 있어요 ⚠️",
-                "메뉴판 미리보기 📖"
-            ]
-        },
-        quest: {
-            hooks: [
-                "진짜 맛있는 {product} 찾고 계신 분? 🙋‍♂️",
-                "{target} 데려가면 칭찬받는 곳 👏",
-                "{pain} 없이 즐기는 {power_adj} 미식 여행 🍽️"
-            ],
-            bodies: [
-                "\n\n맛집 검색하느라 지치셨죠?\n광고에 속고, 웨이팅에 지치고... 😩\n\n이제 그만 헤매세요.\n여기가 종착역입니다. 🏁\n\n{product} 장인이 만드는\n{solution}의 향연!\n\n한 번 맛보면\n다른 데 못 갑니다. 😋\n\n"
-            ],
-            closings: [
-                "이번 주말 데이트는 여기 💕",
-                "지도 앱에 저장 꾹 ⭐",
-                "솔직 후기 댓글로 👇"
+            has_metric: [
+                "웨이팅 {metric} 기다려도 안 아까운 맛집 🕰️"
             ]
         }
     },
-
-    // 지식·교육 템플릿
     education: {
         viral: {
-            hooks: [
+            generic: [
                 "이거 모르면 손해! {power_adj} 꿀팁 🍯",
-                "{metric}만에 성적 올리는 법 📈",
                 "학원 안 가도 됨 🙅‍♂️ {product} 독학 후기",
                 "{target} 필수 시청! {pain} 해결법 📺",
                 "서울대생도 쓴다는 {product} 공부법 🎓"
             ],
-            bodies: [
-                "\n\n공부는 장비빨?\n아니, 전략빨임. 😎\n\n{product}{으/로} 공부했더니\n{metric}만에 효과 봄.\n\n{solution}\n\n{pain} 때문에 막막했는데\n이제 길이 보인다! ✨\n\n"
-            ],
-            closings: [
-                "자료 무료 배포 중 📄",
-                "친구한테만 공유해 🤫",
-                "나중에 보려면 저장 💾"
-            ]
-        },
-        pas: {
-            hooks: [
-                "열심히 하는데 성적은 왜 그대로일까? 🤔",
-                "{pain} 때문에 원하는 대학 포기하실 건가요? 🏫",
-                "시간은 없는데 할 건 많고... {pain} 미치겠죠? 🤯"
-            ],
-            bodies: [
-                "\n\n그건 머리가 나빠서가 아니에요.\n방법이 잘못됐기 때문입니다. ❌\n\n무작정 외우지 마세요.\n{product}{을/를} 활용하면 다릅니다.\n\n{solution}\n\n이해 속도가 {metric}배 빨라집니다.\n지금 바꾸면 결과도 바뀝니다. 🔄\n\n"
-            ],
-            closings: [
-                "상담 신청은 DM 📩",
-                "커리큘럼 확인하기 📋",
-                "합격 수기 보러가기 🏆"
-            ]
-        },
-        quest: {
-            hooks: [
-                "성적 수직 상승 꿈꾸는 {target} 손! ✋",
-                "{pain} 없이 1등급 받는 비밀 🗝️",
-                "공부 자극 팍팍! {power_adj} 동기부여 🔥"
-            ],
-            bodies: [
-                "\n\n불안한 미래 때문에 잠 못 드나요? 🌙\n하지만 걱정만 한다고 해결되진 않죠.\n\n행동해야 바뀝니다. 🏃‍♂️\n\n{product}와 함께라면\n{solution} 가능합니다.\n\n더 이상 {pain} 핑계 대지 마세요.\n당신도 할 수 있습니다! 👊\n\n"
-            ],
-            closings: [
-                "같이 공부할 스터디원 모집 👥",
-                "오늘부터 1일! 📅",
-                "응원 댓글 남겨주세요 👇"
+            has_metric: [
+                "{metric}만에 성적 올리는 법 📈"
             ]
         }
     },
-
-    // 전문직·부동산 템플릿
     professional: {
         viral: {
-            hooks: [
-                "내 돈 {metric} 지키는 법 💰",
+            generic: [
                 "이거 모르면 세금 폭탄 맞음 💣",
                 "변호사가 알려주는 {power_adj} 대처법 ⚖️",
                 "{target} 주목! {pain} 피하는 꿀팁 🍯",
                 "부자들은 이미 다 알고 있는 {product} 🤑"
             ],
-            bodies: [
-                "\n\n나중에 후회하지 말고\n지금 확인하세요. 👀\n\n{product} 하나로\n{pain} 완벽 예방 가능.\n\n{solution}\n\n이 정보는\n진짜 돈 되는 겁니다. 💵\n\n"
-            ],
-            closings: [
-                "무료 상담 링크 🔗",
-                "필요할 때 보게 저장 💾",
-                "주변에 널리 알려주세요 📢"
-            ]
-        },
-        pas: {
-            hooks: [
-                "갑자기 {pain} 닥치면 당황스러우시죠? 😨",
-                "믿었던 사람에게 사기당하는 기분... 💔",
-                "{pain} 때문에 밤잠 설치고 계신가요? 🌙"
-            ],
-            bodies: [
-                "\n\n법은 권리 위에 잠자는 자를\n보호해주지 않습니다. 😴\n\n하지만 혼자 싸우긴 힘들죠.\n전문가의 도움이 필요합니다.\n\n{product} 상담을 통해\n{solution} 찾으세요.\n\n당신의 소중한 자산,\n지킬 수 있습니다. 🛡️\n\n"
-            ],
-            closings: [
-                "비밀 상담 보장 🔒",
-                "승소 사례 확인 🏆",
-                "지금 바로 전화하세요 📞"
-            ]
-        },
-        quest: {
-            hooks: [
-                "{pain} 해결하고 싶은 {target} 필독 📖",
-                "법적 분쟁 없는 {power_adj} 계약법 ✍️",
-                "전문가가 추천하는 {product} 솔루션 👨‍⚖️"
-            ],
-            bodies: [
-                "\n\n복잡한 용어, 어려운 절차...\n머리 아프시죠? 🤕\n\n제가 쉽게 풀어드립니다.\n\n{product}{은/는}\n{solution}의 핵심입니다.\n\n이것만 알면\n{pain} 걱정 없습니다.\n\n현명한 선택이\n미래를 바꿉니다. ✨\n\n"
-            ],
-            closings: [
-                "블로그에 상세 내용 📝",
-                "1:1 컨설팅 문의 🤝",
-                "뉴스레터 구독하기 📧"
+            has_metric: [
+                "내 돈 {metric} 지키는 법 💰"
             ]
         }
     }
+};
+
+const HASHTAGS = {
+    common: ['#릴스', '#꿀팁', '#추천', '#공유', '#일상'],
+    beauty: ['#뷰티', '#스킨케어', '#메이크업', '#코덕', '#피부관리', '#뷰티스타그램'],
+    food: ['#맛집', '#먹스타그램', '#맛스타그램', '#카페투어', '#핫플', '#존맛'],
+    education: ['#공부', '#공스타그램', '#수험생', '#자기계발', '#동기부여', '#팁'],
+    professional: ['#비즈니스', '#재테크', '#성공', '#마케팅', '#경제', '#부자']
 };
