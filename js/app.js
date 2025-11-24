@@ -3,7 +3,7 @@
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎬 릴스 대본 자판기 2.0 (Smart Edition) 시작!');
+    console.log('🎬 릴스 캡션 자판기 2.0 (Smart Edition) 시작!');
 
     // ========================================
     // STATE MANAGEMENT
@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     saveToHistoryBtn.addEventListener('click', () => {
         if (!currentScripts[currentTab]) {
-            alert('먼저 대본을 생성해주세요!');
+            alert('먼저 캡션을 생성해주세요!');
             return;
         }
 
